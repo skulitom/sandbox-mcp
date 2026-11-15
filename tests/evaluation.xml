@@ -1,0 +1,14 @@
+<evaluation>
+  <!-- Run against the unchanged gm_construct fixtures created by both dogfood
+       scripts, GMod build 10175. All questions require only read-only tools. -->
+  <qa_pair><question>Inspect the owned builds and their contents. Which build contains more than twenty frozen parts, including three large circular frames and small markers? Return its exact build name.</question><answer>Chromatic gate laboratory</answer></qa_pair>
+  <qa_pair><question>Find the build with three circular frames. Inspect all its pages and count every part whose physics is frozen. Return the integer count.</question><answer>26</answer></qa_pair>
+  <qa_pair><question>Find the vehicle build, inspect all its parts, and sum the mass of everything except its drivable chassis. Return the integer mass.</question><answer>23</answer></qa_pair>
+  <qa_pair><question>Find the vehicle build. What percentage of its combined physics mass belongs to its chassis? Round to the nearest whole percent and return the number without a percent sign.</question><answer>98</answer></qa_pair>
+  <qa_pair><question>In the circular sculpture, inspect every orbit marker and compare their world heights. Return the label of the highest marker.</question><answer>orbit-marker-05</answer></qa_pair>
+  <qa_pair><question>In the circular sculpture, find the lowest orbit marker by world height. Return its RGB colour as three integers separated by commas, with no spaces.</question><answer>40,210,230</answer></qa_pair>
+  <qa_pair><question>Inspect the circular sculpture and identify its first two labelled gate rings. What is their separation along the world X axis? Return the positive integer in Source units.</question><answer>45</answer></qa_pair>
+  <qa_pair><question>Inspect the vehicle's two cargo pods, then search the model catalog to verify their shared model. Return the exact model path.</question><answer>models/props_c17/oildrum001.mdl</answer></qa_pair>
+  <qa_pair><question>Compare the vehicle build's actual chassis entity class with the class advertised for the stock Jeep preset in the vehicle catalog. Are the two class strings identical? Return Yes or No.</question><answer>No</answer></qa_pair>
+  <qa_pair><question>Compare the two example builds. How many of the vehicle build's parts have enabled motion, compared with the sculpture's frozen physics? Return only the number of moving-enabled vehicle parts.</question><answer>8</answer></qa_pair>
+</evaluation>

@@ -1,0 +1,5 @@
+/target/
+/artifacts/
+/release/
+**/__pycache__/
+
