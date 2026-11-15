@@ -86,3 +86,10 @@ No Wiremod source or game assets are bundled.
 - [Native screenshots](https://wiki.facepunch.com/gmod/render.Capture)
 - [Entity identity](https://wiki.facepunch.com/gmod/Entity:GetCreationID)
 - [Valve model headers](https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/public/studio.h)
+
+
+Publication verification: the freshly downloaded 0.2.0 Steam GMA matches the
+native-tested archive byte for byte (SHA-256
+`abcfb255f3fb60c59109fbb0ad31f97fa59344b0ef00523715c1a99dd93e3da2`). The anonymous
+GitHub Windows ZIP download matches its published checksum. Workshop visibility,
+owner/app and the four existing gallery items were verified after updating.

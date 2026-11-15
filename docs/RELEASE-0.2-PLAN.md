@@ -25,3 +25,5 @@ game restart. Publication receipts are retained under release/.
 Deliberately deferred: StrongWeld adapter, arbitrary addon/dupe support, grants
 for existing Wire/vehicle assemblies, thumbnails and mirroring. These limits are
 stated in the public workflow guide and listing rather than advertised as done.
+
+Status: published and download-verified on Workshop and GitHub as 0.2.0.

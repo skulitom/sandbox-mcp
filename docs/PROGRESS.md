@@ -42,3 +42,11 @@ match source exactly and mount in both realms. The E2 hovercraft example was
 built through public MCP calls and measured for 20 seconds, then its saved
 circuit was restored and run after a full game restart. No private fixture or
 Wiremod/game asset is packaged. Public limits are in WORKFLOWS and VALIDATION.
+
+
+Published 0.2.0 to the existing Workshop item and GitHub release. Steam confirms
+public visibility, correct owner/app and all four existing gallery entries. The
+fresh Steam download matches the native-tested GMA SHA-256 exactly. An anonymous
+GitHub companion ZIP download also matches. The source tag is `v0.2.0`.
+Temporary game addons were archived, all seven configuration paths were restored
+and hash-verified, owned game processes closed, and the Anode lease released.
