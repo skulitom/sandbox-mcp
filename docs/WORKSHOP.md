@@ -6,6 +6,8 @@ Title: **Sandbox MCP - Build with AI**
 
 Native in-game preview and gallery; no generated cover.
 
+Showcase: https://www.youtube.com/watch?v=30DsajKY70I
+
 [h1]Build in Garry’s Mod with your AI assistant[/h1]
 Find props, create a complete labelled scene, connect its parts, test the physics and inspect the result through in-game screenshots. Ask your AI to refine the build or undo a specific change.
 
