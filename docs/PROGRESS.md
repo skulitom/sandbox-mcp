@@ -16,5 +16,14 @@ original synthesized score. All builds, signal wiring, physics edits and undo
 in the footage used the public MCP tools. Private helpers only moved the camera
 and recorded frames. Final export decodes cleanly as H.264/AAC stereo.
 
-Publication in progress: GitHub skulitom/sandbox-mcp; Steam item 3839989108.
-The Workshop draft has its native cover and three actual in-game gallery images.
+Published: [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108),
+[GitHub/MIT source and companion](https://github.com/skulitom/sandbox-mcp/releases/tag/v0.1.0),
+and the [26-second showcase](https://www.youtube.com/watch?v=30DsajKY70I).
+Steam API confirms public visibility, the correct owner/app and all four gallery
+entries (three screenshots plus video). An anonymous companion download matches
+the release checksum. YouTube title and description were saved and verified;
+the public watch page and oEmbed endpoint work.
+
+All temporary game addons have been archived outside the game. The seven
+original configuration paths were restored and verified. Owned game/browser
+processes are closed and the Anode lease released.
