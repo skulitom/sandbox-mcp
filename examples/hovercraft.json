@@ -1,0 +1,1010 @@
+{
+  "entities": [
+    {
+      "angles": [
+        0,
+        0,
+        0
+      ],
+      "color": [
+        28,
+        46,
+        65
+      ],
+      "frozen": true,
+      "kind": "prop",
+      "label": "deck",
+      "mass": 100,
+      "material": "models/debug/debugwhite",
+      "model": "models/hunter/plates/plate2x3.mdl",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "skin": 0
+    },
+    {
+      "angles": [
+        0,
+        0,
+        0
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "controller",
+      "mass": 2,
+      "model": "models/beer/wiremod/gate_e2.mdl",
+      "pos": [
+        0,
+        0,
+        8
+      ],
+      "preset": "expression2",
+      "settings": {
+        "code": "@name Sandbox MCP hover controller\n@inputs D1 D2 D3 D4 Front X\n@outputs F1 F2 F3 F4 Forward Reverse\n@persist L1 L2 L3 L4 LX LT\n@trigger none\ninterval(50)\nif (first()) { L1 = D1 L2 = D2 L3 = D3 L4 = D4 LX = X LT = curtime() }\nDelta = max(curtime()-LT, 0.01)\nF1 = clamp(0.38 + (130-D1)*0.005 - (D1-L1)*0.08, 0, 1)\nF2 = clamp(0.38 + (130-D2)*0.005 - (D2-L2)*0.08, 0, 1)\nF3 = clamp(0.38 + (130-D3)*0.005 - (D3-L3)*0.08, 0, 1)\nF4 = clamp(0.38 + (130-D4)*0.005 - (D4-L4)*0.08, 0, 1)\nDesired = clamp((Front-250)*0.2, -25, 35)\nVelocity = (X-LX)/Delta\nDrive = clamp((Desired-Velocity)*0.012, -1, 1)\nForward = max(Drive, 0)\nReverse = max(-Drive, 0)\nL1 = D1 L2 = D2 L3 = D3 L4 = D4 LX = X LT = curtime()\n"
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        0,
+        0,
+        0
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "gps",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        0,
+        25,
+        8
+      ],
+      "preset": "gps",
+      "settings": [],
+      "skin": 0
+    },
+    {
+      "angles": [
+        0,
+        0,
+        0
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "gyro",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_siren.mdl",
+      "pos": [
+        0,
+        -25,
+        8
+      ],
+      "preset": "gyroscope",
+      "settings": [],
+      "skin": 0
+    },
+    {
+      "angles": [
+        90,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "front",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        60,
+        0,
+        0
+      ],
+      "preset": "ranger",
+      "settings": {
+        "range": 1500
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "lift-1",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        -38,
+        -58,
+        -5
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 160
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "height-1",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        -38,
+        -58,
+        -20
+      ],
+      "preset": "ranger",
+      "settings": {
+        "range": 600,
+        "show_beam": false
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "lift-2",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        -38,
+        58,
+        -5
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 160
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "height-2",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        -38,
+        58,
+        -20
+      ],
+      "preset": "ranger",
+      "settings": {
+        "range": 600,
+        "show_beam": false
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "lift-3",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        38,
+        -58,
+        -5
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 160
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "height-3",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        38,
+        -58,
+        -20
+      ],
+      "preset": "ranger",
+      "settings": {
+        "range": 600,
+        "show_beam": false
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "lift-4",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        38,
+        58,
+        -5
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 160
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        1.3943459862275631e-06,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "height-4",
+      "mass": 2,
+      "model": "models/jaanus/wiretool/wiretool_range.mdl",
+      "pos": [
+        38,
+        58,
+        -20
+      ],
+      "preset": "ranger",
+      "settings": {
+        "range": 600,
+        "show_beam": false
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        -90,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "forward",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        -45,
+        0,
+        0
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 200
+      },
+      "skin": 0
+    },
+    {
+      "angles": [
+        90,
+        180,
+        180
+      ],
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "frozen": true,
+      "kind": "wire",
+      "label": "reverse",
+      "mass": 2,
+      "model": "models/props_c17/lampshade001a.mdl",
+      "pos": [
+        45,
+        0,
+        0
+      ],
+      "preset": "thruster",
+      "settings": {
+        "force": 200
+      },
+      "skin": 0
+    }
+  ],
+  "format": "sandbox-mcp-blueprint",
+  "links": [
+    {
+      "a": "deck",
+      "b": "controller",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "gps",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "gyro",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "front",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "lift-1",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "height-1",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "lift-2",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "height-2",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "lift-3",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "height-3",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "lift-4",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "height-4",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "forward",
+      "kind": "weld"
+    },
+    {
+      "a": "deck",
+      "b": "reverse",
+      "kind": "weld"
+    },
+    {
+      "a": "controller",
+      "b": "gps",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "gyro",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "front",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "lift-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "height-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "controller",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "gyro",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "front",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "lift-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "height-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gps",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "front",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "lift-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "height-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "gyro",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "lift-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "height-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "front",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "height-1",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-1",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "lift-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-1",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "height-2",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-2",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "lift-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-2",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-3",
+      "b": "height-3",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-3",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-3",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-3",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-3",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-3",
+      "b": "lift-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-3",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-3",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-3",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-4",
+      "b": "height-4",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-4",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "lift-4",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-4",
+      "b": "forward",
+      "kind": "nocollide"
+    },
+    {
+      "a": "height-4",
+      "b": "reverse",
+      "kind": "nocollide"
+    },
+    {
+      "a": "forward",
+      "b": "reverse",
+      "kind": "nocollide"
+    }
+  ],
+  "name": "MCP obstacle-aware hovercraft",
+  "version": 1,
+  "wire_links": [
+    {
+      "from": "gps",
+      "input": "X",
+      "output": "X",
+      "to": "controller"
+    },
+    {
+      "from": "front",
+      "input": "Front",
+      "output": "Dist",
+      "to": "controller"
+    },
+    {
+      "from": "height-2",
+      "input": "D2",
+      "output": "Dist",
+      "to": "controller"
+    },
+    {
+      "from": "height-1",
+      "input": "D1",
+      "output": "Dist",
+      "to": "controller"
+    },
+    {
+      "from": "height-4",
+      "input": "D4",
+      "output": "Dist",
+      "to": "controller"
+    },
+    {
+      "from": "height-3",
+      "input": "D3",
+      "output": "Dist",
+      "to": "controller"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "F1",
+      "to": "lift-1"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "F2",
+      "to": "lift-2"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "F3",
+      "to": "lift-3"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "F4",
+      "to": "lift-4"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "Forward",
+      "to": "forward"
+    },
+    {
+      "from": "controller",
+      "input": "A",
+      "output": "Reverse",
+      "to": "reverse"
+    }
+  ]
+}

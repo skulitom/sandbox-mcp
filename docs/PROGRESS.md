@@ -27,3 +27,18 @@ the public watch page and oEmbed endpoint work.
 All temporary game addons have been archived outside the game. The seven
 original configuration paths were restored and verified. Owned game/browser
 processes are closed and the Anode lease released.
+
+
+## 0.2 — 15 November 2026
+
+Implemented and packaged the next workflow release at the user's request.
+25 tools and 11 optional Wire presets; portable blueprints/checkpoints, atomic
+circuits, group transforms/alignment, size-filtered assets, time-series signals,
+diagnostics, separate E2 opt-in and explicit revocable player prop grants.
+
+Validation: 5 Rust, 24 setup, 3 protocol revisions, 30 base native, 21 Wire,
+34 workflow, 9 transport and 7 fresh-restart checks. Nine packaged Lua files
+match source exactly and mount in both realms. The E2 hovercraft example was
+built through public MCP calls and measured for 20 seconds, then its saved
+circuit was restored and run after a full game restart. No private fixture or
+Wiremod/game asset is packaged. Public limits are in WORKFLOWS and VALIDATION.

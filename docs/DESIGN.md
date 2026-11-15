@@ -28,7 +28,8 @@ Status and errors explain the exact next step. Filtered/paginated model discover
 includes bounds. Entity references include creation identity, not reusable entity
 indices alone. Scene creation validates the complete batch and rolls back on
 failure. Builds have stable IDs, named parts and an explicit undo operation.
-Edits and constraints are bounded and limited to the connected user's creations.
+Edits and constraints are bounded and limited to the connected user's creations
+or explicitly granted own prop assemblies.
 The initial tools cover status, catalog, inspect, trace, create, edit, constraints,
 undo, build cleanup, camera, screenshot, physics observation and event history.
 The preview exposes no arbitrary Lua execution. The host controls connection
@@ -46,3 +47,17 @@ consent and optional screenshot/camera access separately.
 - Iterate on failures and awkward steps found while using the tools ourselves.
 - Package, installation guide and accurate Workshop listing draft. Publication
   awaits the user's request or approval.
+
+## 0.2 extension
+
+The existing file-mailbox transport and 0.1 tools remain compatible. Four Lua
+modules add portable allowlisted builds, experiments, E2 and player grants.
+Blueprints contain declarative part specs, never arbitrary serialized Lua tables.
+Loading reuses the same bounded create/rollback path. Signal batches prevalidate
+the complete graph. Measurements are asynchronous and capped at 700 KB.
+
+Expression 2 has a separate host consent flag, retains Wiremod permission/quota
+checks, and compiles uploads stopped. It is deliberately documented as broader
+than the ordinary per-entity MCP editing scope. Stop resets all typed outputs.
+Granting existing props happens only via an authenticated in-game host action;
+MCP cannot grant itself access. Revocation also guards historical undo closures.

@@ -16,7 +16,7 @@ def output(ref,name="Out"):
 def connect(a,out,b,inp):return c.call("sandbox_wire_connect",{"from":a,"output":out,"to":b,"input":inp})
 try:
     catalog=c.call("sandbox_catalog",{"kind":"wire"})
-    check("Wire detected and eight components discoverable",catalog["installed"] and len([i for i in catalog["items"] if i["kind"]=="component"])==8)
+    check("Wire detected and eleven components discoverable",catalog["installed"] and len([i for i in catalog["items"] if i["kind"]=="component"])==11)
     specs=[("power","constant",{"value":2}),("button","button",{}),("sum","gate",{"action":"+"}),("lamp","indicator",{}),("screen","screen",{}),("speed","speedometer",{}),("gps","gps",{}),("thrust","thruster",{"force":400})]
     build=c.call("sandbox_create",{"name":"Wire integration evaluation","origin":[400,100,-80],"entities":[{"label":label,"kind":"wire","preset":preset,"settings":settings,"pos":[i*60,0,0]} for i,(label,preset,settings) in enumerate(specs)]})
     refs={e["label"]:e["ref"] for e in build["entities"]}
@@ -50,7 +50,7 @@ try:
     c.call("sandbox_undo",{"operation_id":replace["operation_id"]})
     c.call("sandbox_undo",{"operation_id":off["operation_id"]})
     fail("Unbounded setting rejected before spawning","sandbox_create",{"name":"Invalid force","entities":[{"label":"bad","kind":"wire","preset":"thruster","settings":{"force":999999}}]},"range")
-    fail("Unadvertised entity class rejected","sandbox_create",{"name":"No arbitrary E2","entities":[{"label":"bad","kind":"wire","preset":"expression2"}]},"Unknown Wire preset")
+    fail("Unadvertised entity class rejected","sandbox_create",{"name":"No arbitrary E2","entities":[{"label":"bad","kind":"wire","preset":"unrestricted_entity"}]},"Unknown Wire preset")
     existing=c.call("sandbox_inspect",{"limit":1})["entities"][0]["ref"]
     fail("Non-owned entity cannot be wired","sandbox_wire_connect",{"from":existing,"output":"Out","to":refs["screen"],"input":"B"},"AI-created")
     connect(refs["button"],"Out",refs["thrust"],"A")

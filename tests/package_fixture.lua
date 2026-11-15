@@ -7,5 +7,5 @@ include("autorun/sandbox_mcp.lua")
 -- Exercise the same consent message as the panel in this explicitly authorized
 -- isolated test desktop. The production addon never grants its own permission.
 if CLIENT then timer.Simple(2,function()
-    net.Start("sandbox_mcp_consent") net.WriteBool(true) net.WriteBool(true) net.SendToServer()
+    net.Start("sandbox_mcp_consent") net.WriteBool(true) net.WriteBool(true) net.WriteBool(true) net.SendToServer()
 end) end

@@ -2,7 +2,7 @@ SandboxMCP = SandboxMCP or {}
 local S = SandboxMCP
 if S.disconnect then S.disconnect() end
 if S.root then file.Delete(S.root .. "/status.json") end
-S.version = "0.1.0"
+S.version = "0.2.0"
 S.instance = util.SHA256(tostring(os.time()) .. ":" .. tostring(SysTime()) .. ":" .. tostring(math.random())):sub(1, 24)
 S.root = "sandbox_mcp/instances/" .. S.instance
 S.connected, S.owner, S.token = false, nil, nil
@@ -36,7 +36,7 @@ end
 function S.notify()
     S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
         connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, wiremod=S.wireAvailable and S.wireAvailable() or false, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod"}})
+        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, wiremod=S.wireAvailable and S.wireAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants"}})
     if not IsValid(S.owner) then return end
     net.Start("sandbox_mcp_state")
     net.WriteBool(S.connected)
@@ -45,6 +45,8 @@ function S.notify()
     net.Send(S.owner)
 end
 function S.disconnect()
+    if S.revokeGrants then S.revokeGrants() end
+    S.e2Allowed=false
     S.connected, S.token = false, nil
     S.cameraPos, S.cameraUntil = nil, nil
     file.Delete(S.root .. "/auth.json")
@@ -54,10 +56,11 @@ function S.disconnect()
 end
 net.Receive("sandbox_mcp_consent", function(_, ply)
     if not (game.SinglePlayer() or ply:IsListenServerHost()) then return end
-    local enable, capture = net.ReadBool(), net.ReadBool()
+    local enable, capture, e2 = net.ReadBool(), net.ReadBool(), net.ReadBool()
     if not enable then S.disconnect() return end
     if S.connected then S.disconnect() end
     S.owner, S.connected, S.captureAllowed = ply, true, capture
+    S.e2Allowed=e2
     S.token = util.SHA256(S.instance .. tostring(SysTime()) .. tostring(math.random()))
     S.write(S.root .. "/auth.json", {token=S.token})
     S.notify()
@@ -68,6 +71,10 @@ hook.Add("ShutDown", "SandboxMCPShutdown", function() S.disconnect() file.Delete
 
 include("sandbox_mcp/world.lua")
 include("sandbox_mcp/wire.lua")
+include("sandbox_mcp/expression2.lua")
+include("sandbox_mcp/builds.lua")
+include("sandbox_mcp/experiments.lua")
+include("sandbox_mcp/grants.lua")
 
 local handlers = S.handlers
 handlers.sandbox_events = function(a)
@@ -133,7 +140,7 @@ hook.Add("Think", "SandboxMCPBridge", function()
         if S.connected and not IsValid(S.owner) then S.disconnect() end
         S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
             connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), wiremod=S.wireAvailable and S.wireAvailable() or false, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod"}})
+            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), wiremod=S.wireAvailable and S.wireAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants"}})
     end
     if clock < nextPoll then return end
     nextPoll = clock + 0.06

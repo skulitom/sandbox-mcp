@@ -4,52 +4,61 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108
 
 Title: **Sandbox MCP - Build with AI**
 
-Native in-game preview and gallery; no generated cover.
+Existing native in-game cover and gallery retained.
 
-Showcase: https://www.youtube.com/watch?v=30DsajKY70I
+[h1]Build in Garry's Mod with your AI assistant[/h1]
+Find props, build a complete contraption, connect its parts, test the physics and inspect real game screenshots. Ask your AI to refine it, save it or undo a specific change.
 
-[h1]Build in Garry’s Mod with your AI assistant[/h1]
-Find props, create a complete labelled scene, connect its parts, test the physics and inspect the result through in-game screenshots. Ask your AI to refine the build or undo a specific change.
+[b]New in 0.2: blueprints, checkpoints, complete Wire circuits, Expression 2, assembly tools and measurements.[/b]
+Existing users: update the Windows companion too, then restart your AI app and map.
 
 [b]Requires the free Windows companion and an AI app with local MCP support.[/b]
-Workshop installs the Lua addon. The companion connects it to your AI app and includes a setup wizard. No Node.js, Python or game DLL is required.
+Workshop supplies the Lua addon. The companion supplies the MCP server and setup wizard. No Node.js, Python or game DLL is required.
 
 [url=https://github.com/skulitom/sandbox-mcp/releases/latest]Download the companion[/url]
-[url=https://github.com/skulitom/sandbox-mcp/blob/main/docs/INSTALL.md]Setup guide and troubleshooting[/url]
-[url=https://github.com/skulitom/sandbox-mcp]MIT-licensed source on GitHub[/url]
+[url=https://github.com/skulitom/sandbox-mcp/blob/main/docs/INSTALL.md]Setup and troubleshooting[/url]
+[url=https://github.com/skulitom/sandbox-mcp/blob/main/docs/WORKFLOWS.md]Blueprints, E2 and workflow guide[/url]
+[url=https://github.com/skulitom/sandbox-mcp]MIT-licensed source[/url]
+[url=https://www.youtube.com/watch?v=30DsajKY70I]Watch the in-game showcase[/url]
 
 [h2]Get started[/h2]
 [list]
 [*]Subscribe to this addon.
 [*]Download and extract the companion. Open Setup.vbs or sandbox-mcp.exe.
-[*]Choose your AI app, then restart it and enable Sandbox MCP.
-[*]Start a Sandbox map. Open Q → Utilities → Sandbox MCP → Connection and click Connect AI.
+[*]Choose your AI app, restart it and enable Sandbox MCP.
+[*]Start Sandbox. Open Q > Utilities > Sandbox MCP > Connection and click Connect AI.
 [/list]
 The wizard supports Codex, Claude Desktop, Cursor and GitHub Copilot / VS Code. Other local stdio MCP clients can use the manual configuration command.
 
-Try: “Build me a cargo rover. Keep the driver's view clear, weld the cargo to the chassis, test its physics and show me a screenshot.”
+Try: "Build me a cargo rover. Keep the driver's view clear, test its physics, take a screenshot, and save it as my_rover."
 
-[h2]Useful building tools[/h2]
+[h2]Build, save and improve[/h2]
 [list]
-[*]Create named parts and physical connections in one call.
-[*]Search mounted models, vehicle presets and supported NPCs.
-[*]Inspect dimensions, placement, mass, motion and nearby entities.
-[*]Native weld, no-collide, axis and rope connections.
-[*]Specific-operation undo plus GMod’s familiar Undo menu.
+[*]25 structured tools, including all the original tools.
+[*]Portable JSON blueprints: save, share, import and load supported contraptions at another position or rotation.
+[*]Named checkpoints for repeatable experiments in the current map.
+[*]Move/rotate an assembly together; align its bounding face with a target and chosen clearance.
+[*]Find mounted models using size filters and shape hints.
+[*]Record physics and live Wire signals for up to 20 seconds; inspect diagnostics.
+[*]Native weld, no-collide, axis and rope links; targeted undo and the familiar Undo menu.
 [*]Optional game screenshots and temporary camera views.
-[*]Clear connection status and an in-game disconnect control.
 [/list]
+Blueprints restore frozen by default, with buttons off and E2 stopped. Models and dependencies must be installed. This is a supported-parts format, not a universal duplicator.
 
-[h2]Optional Wiremod integration[/h2]
-With [url=https://steamcommunity.com/sharedfiles/filedetails/?id=160250458]Wiremod[/url] installed, your AI can create buttons, numeric constants, logic/timed gates, thrusters, indicators, screens, speedometers and GPS sensors. Inspect live ports and values, connect real signals, change controls and undo wiring changes.
+[h2]Optional Wiremod and Expression 2[/h2]
+With [url=https://steamcommunity.com/sharedfiles/filedetails/?id=160250458]Wiremod[/url], create buttons, constants, logic/timed gates, thrusters, indicators, screens, speedometers, GPS, gyroscopes, rangers and E2 chips.
 
-Try: “Build a button-controlled Wiremod pulse display with alternating lights and a numeric screen. Inspect the circuit and test the button.”
+Build parts, physical constraints and signal wiring in one operation. Batch existing connections with validation, rollback and one undo. Inspect actual port values and record how a circuit behaves over time.
 
-Wiremod is a separate, optional addon. Restart the map after installing it. Expression 2 scripting, arbitrary Wire entities and editing manually created Wire components are not supported in this first version.
+E2 is [b]off by default[/b] and needs separate host permission in the connection panel. Code compiles stopped; run it explicitly. Invalid uploads preserve working code. Stop resets outputs. E2 retains Wiremod's normal player permissions, enabled extensions and server quotas, so permitted code can also affect other props owned by the host. Code undo cannot reverse those world effects.
+
+Try: "Build an E2 hover platform with ground rangers. Save a checkpoint, measure its height and tilt, and tune the controller."
+
+Wiremod is a separate optional addon. Arbitrary Wire components and grants of manually built Wire contraptions are not supported.
 
 [h2]You stay in control[/h2]
-Only the local singleplayer/listen-server host can connect. The AI can inspect the game, but editing tools affect only objects it creates. Screenshot permission is separate. Disconnect revokes the connection. There is no arbitrary Lua, console, shell or filesystem tool.
+Only the local singleplayer/listen-server host can connect. Ordinary editing tools affect AI-created objects and your prop assemblies that you explicitly grant through the panel. Revoke grants at any time without deleting the props. Screenshot and E2 permissions are separate. Disconnect blocks new commands and revokes grants; existing autonomous circuits keep running unless stopped.
 
-The companion needs a desktop/CLI AI client that supports local MCP. Browser-only chat apps may not support it. Windows x64 companion; dedicated-server and remote-machine connections are outside version 0.1. Native physics and the AI model’s building choices still matter.
+No arbitrary Lua, console, shell or filesystem tool. Windows x64 companion; local stdio MCP client required. Dedicated servers and remote machines are not supported in 0.2. Native physics and the AI model's building choices still matter. StrongWeld integration is not included.
 
-Original code: MIT. Wiremod is not bundled. Game assets belong to their respective authors.
+Original code: MIT. Wiremod is not bundled. Game assets belong to their authors.

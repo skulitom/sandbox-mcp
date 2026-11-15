@@ -1,6 +1,7 @@
 local S = SandboxMCP
 S.handlers = S.handlers or {}
 S.tracked = S.tracked or setmetatable({}, {__mode="k"})
+S.constraintRecords = S.constraintRecords or setmetatable({}, {__mode="k"})
 local H, tracked = S.handlers, S.tracked
 local npcClasses = {"npc_citizen", "npc_alyx", "npc_barney", "npc_kleiner", "npc_monk", "npc_dog", "npc_combine_s", "npc_metropolice", "npc_zombie", "npc_headcrab", "npc_antlion", "npc_turret_floor"}
 
@@ -24,7 +25,7 @@ local function resolve(id, owned)
     if instance~=S.instance then error("Entity ref is from a previous game session; inspect again",0) end
     local e = index and Entity(tonumber(index))
     if not IsValid(e) or e:GetCreationID() ~= tonumber(creation) then error("Stale entity ref " .. id .. "; inspect again",0) end
-    if owned and (not tracked[e] or tracked[e].owner ~= S.owner) then error("Only this host's AI-created objects can be changed",0) end
+    if owned and (not tracked[e] or tracked[e].owner ~= S.owner) then error("Only this host's AI-created or explicitly granted objects can be changed",0) end
     return e
 end
 local function info(e)
@@ -42,7 +43,17 @@ function S.liveCount() local n=0 for e in pairs(tracked) do if IsValid(e) then n
 local function operation(kind, entities, undoFn)
     S.sequence = S.sequence + 1
     local id = S.instance .. "-" .. S.sequence
-    S.operations[id] = {kind=kind, undo=undoFn, entities=entities, owner=S.owner}
+    local grants={}
+    local function remember(e) if tracked[e] and tracked[e].grant then grants[e]=tracked[e].grant end end
+    for _,e in ipairs(entities) do
+        remember(e)
+        local c=S.constraintRecords[e] if c then remember(c.a) remember(c.b) end
+    end
+    local function guardedUndo()
+        for e,grant in pairs(grants) do if not tracked[e] or tracked[e].grant~=grant then error("Access to this assembly was revoked; undo refused",0) end end
+        return undoFn()
+    end
+    S.operations[id] = {kind=kind, undo=guardedUndo, entities=entities, owner=S.owner}
     undo.Create("Sandbox MCP " .. kind)
     undo.SetPlayer(S.owner)
     undo.AddFunction(function() local ok, err=pcall(H.sandbox_undo,{operation_id=id}) if not ok and IsValid(S.owner) then S.owner:ChatPrint(tostring(err)) end end)
@@ -92,7 +103,21 @@ H.sandbox_catalog = function(a)
     local kind, query = a.kind or "models", string.lower(a.query or "")
     local matches = {}
     if kind=="models" then
-        for _, model in ipairs(known) do if model:lower():find(query,1,true) then matches[#matches+1]=model end end
+        local shapes={box={"cube","crate","block"},plate={"plate"},tube={"tube","pipe","cylinder"},sphere={"sphere"},cone={"cone"},wheel={"wheel","tire"}}
+        if a.shape and not shapes[a.shape] then error("Unknown shape hint",0) end
+        for _,limit in ipairs({a.min_size or {},a.max_size or {}}) do for _,n in ipairs(limit) do S.number(n,0,32768) end end
+        for _,model in ipairs(known) do
+            local include=model:lower():find(query,1,true)~=nil
+            if include and a.shape then
+                include=false for _,word in ipairs(shapes[a.shape]) do if model:find(word,1,true) then include=true break end end
+            end
+            if include and a.physics_only then include=util.IsValidProp(model) end
+            if include and (a.min_size or a.max_size) then
+                local b=modelBounds(model) include=b~=nil
+                if b then for n=1,3 do local size=b.max[n]-b.min[n] if size<(a.min_size and a.min_size[n] or 0) or size>(a.max_size and a.max_size[n] or 32768) then include=false end end end
+            end
+            if include then matches[#matches+1]=model end
+        end
     elseif kind=="vehicles" then
         for id, v in pairs(list.Get("Vehicles")) do if (id .. " " .. (v.Name or "")):lower():find(query,1,true) then matches[#matches+1]={id=id,name=v.Name,model=v.Model,class=v.Class} end end
     elseif kind=="npcs" then
@@ -105,7 +130,8 @@ H.sandbox_catalog = function(a)
     for i=offset+1, math.min(#matches,offset+limit) do
         local item=matches[i]
         if kind=="models" then
-            item={model=item, bounds=modelBounds(item), valid=util.IsValidModel(item)}
+            local b=modelBounds(item)
+            item={model=item,bounds=b,size=b and {b.max[1]-b.min[1],b.max[2]-b.min[2],b.max[3]-b.min[3]},valid=util.IsValidModel(item)}
         end
         items[#items+1]=item
     end
@@ -178,6 +204,9 @@ local function makeLink(l,lookup,created)
     elseif l.kind=="axis" then c=constraint.Axis(a,b,0,0,S.vector(l.anchor_a or {0,0,0}),S.vector(l.anchor_b or {0,0,0}),0,0,0,1,S.vector(l.axis or {0,0,1}))
     else c,rope=constraint.Rope(a,b,0,0,S.vector(l.anchor_a or {0,0,0}),S.vector(l.anchor_b or {0,0,0}),l.length or a:GetPos():Distance(b:GetPos()),0,0,2,"cable/rope",false) end
     if not IsValid(c) then error("The engine could not create the connection",0) end
+    local spec=table.Copy(l)
+    if spec.kind=="rope" and spec.length==nil then spec.length=a:GetPos():Distance(b:GetPos()) end
+    S.constraintRecords[c]={a=a,b=b,spec=spec}
     created[#created+1]=c if IsValid(rope) then created[#created+1]=rope end
 end
 local function removeAll(entities) for i=#entities,1,-1 do if IsValid(entities[i]) then entities[i]:Remove() end end end
@@ -221,17 +250,27 @@ H.sandbox_create = function(a)
                 e.VehicleName=p.preset e.VehicleTable=v
             elseif p.model then e:SetModel(p.model) end
             e:SetPos(origin + S.vector(p.pos or {0,0,0})) e:SetAngles(angles(p.angles))
+            if p.kind=="wire" and p.preset=="expression2" then e:SetPlayer(S.owner) e.player=S.owner end
             e:SetCreator(S.owner) e:Spawn() e:Activate()
+            if p.kind=="wire" and p.preset=="expression2" then e:SetInstancePlayer(S.owner) end
             if p.kind=="wire" then S.setupWirePart(e,p) end
             if v and v.Members then table.Merge(e:GetTable(),v.Members) end
             if p.kind=="npc" and p.class=="npc_citizen" then e:SetModel("models/humans/group01/male_07.mdl") end
             if p.kind~="npc" and not IsValid(e:GetPhysicsObject()) then error("No physics for "..p.label,0) end
             if p.frozen==nil and p.kind~="npc" then p.frozen=true end
             local properties=table.Copy(p) properties.pos=nil properties.angles=nil apply(e,properties)
-            tracked[e]={owner=S.owner,build=buildID,label=p.label,revision=0,wire=p.kind=="wire" and p.preset or nil}
+            tracked[e]={owner=S.owner,build=buildID,label=p.label,revision=0,wire=p.kind=="wire" and p.preset or nil,spec=table.Copy(p)}
             if p.kind=="light" then e:SetNWBool("SandboxMCPLight",true) end
         end
         for _,l in ipairs(a.links or {}) do makeLink(l,function(label)return byLabel[label]end,connections) end
+        if a.wire_links and #a.wire_links>0 then
+            local wires={}
+            for _,l in ipairs(a.wire_links) do
+                if not byLabel[l.from] or not byLabel[l.to] then error("Wire references unknown part label",0) end
+                wires[#wires+1]={from=ref(byLabel[l.from]),output=l.output,to=ref(byLabel[l.to]),input=l.input}
+            end
+            S.wireBatch(wires,false)
+        end
     end)
     if not ok then removeAll(connections) removeAll(made) error("Batch rolled back: "..tostring(err),0) end
     S.builds[buildID]={name=a.name,entities=parts,connections=connections,owner=S.owner}
@@ -241,6 +280,7 @@ H.sandbox_create = function(a)
 end
 -- Narrow adapter API shared with the optional Wiremod integration.
 S.entityRef, S.resolveEntity, S.entityInfo, S.operation = ref, resolve, info, operation
+S.modelBounds, S.applyChanges, S.validateChanges = modelBounds, apply, validateChanges
 H.sandbox_edit = function(a)
     if not istable(a.items) or #a.items<1 or #a.items>128 then error("Use 1–128 edits",0) end
     local entities,snapshots,seen={},{},{}

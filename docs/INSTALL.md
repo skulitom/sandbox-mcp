@@ -58,9 +58,12 @@ models vary in building ability and may require tool approvals in their app.
   access and resets the temporary camera. Restarting/changing maps disconnects.
 - Only the local singleplayer/listen-server host can connect. Other players do
   not gain access by subscribing. Dedicated-server and remote-machine control
-  are not supported in 0.1.0.
+  are not supported in 0.2.0.
 - The AI can inspect the world, but can edit/remove only objects it created for
-  this host. It has no arbitrary Lua, console, shell, or filesystem tool.
+  this host, plus assemblies you explicitly grant using the panel. Grants in 0.2
+  support your `prop_physics` assemblies only. Revoking a grant or disconnecting
+  removes access without removing the props. There is no arbitrary Lua, console,
+  shell or filesystem tool. E2 permission is broader, as explained below.
 - Screenshots are optional. They contain the consenting host's game view, never
   the desktop. Temporary camera views reset after 30 seconds.
 - Use **Z** / the Undo tab, or ask the AI to undo a specific `operation_id`.
@@ -114,6 +117,32 @@ along local -Z; `[180,0,0]` points their thrust upward.
 Only AI-created components can be changed. Inputs already wired must first be
 explicitly disconnected. Port types must match. Instant feedback cycles are
 rejected; use the timed gates for pulses. Wiring, disconnection and source
-changes each return a specific undo operation. Expression 2, arbitrary Wire
-entity creation and control of manually created Wire components are outside
-this first release.
+changes each return a specific undo operation. Use `wire_links` in
+`sandbox_create` or `sandbox_wire_batch` to connect a whole circuit with rollback
+and one undo. Ranger and gyroscope presets supply distance and attitude feedback.
+Arbitrary Wire entity creation and grants of manually built Wire components
+are not supported.
+
+### Expression 2 (optional, off by default)
+
+Check **Allow Expression2 code** in the connection panel, then reconnect. The AI
+can validate, upload, run, stop and inspect self-contained E2 programs on its own
+chips. Creation and successful uploads compile stopped; run is explicit. Stop
+clears outputs to their Wiremod neutral values. Invalid code leaves working code
+unchanged. A wired chip must be disconnected before changing its port interface.
+
+E2 keeps Wiremod’s normal player permissions, enabled extensions and server quotas.
+Unlike the ordinary editing tools, permitted E2 functions can affect other props
+owned by you. Enable it only if you want the AI to have those capabilities. Code
+undo restores the old program stopped; it cannot reverse effects of running it.
+Disconnecting prevents new MCP commands but does not delete builds or stop their
+autonomous circuits. Stop the chip before disconnecting when that is desired.
+
+## Updating to 0.2
+
+Let Steam update the addon, restart the map, and download/extract the new Windows
+ZIP. Close your AI app and rerun Setup to update the installed companion, then
+reopen the app. Keep its existing `sandbox-mcp` configuration unless Setup says
+that entry needs replacement. Both halves need updating to expose the new tools.
+
+See [Workflows](WORKFLOWS.md) for blueprints, checkpoints, assembly and measurements.

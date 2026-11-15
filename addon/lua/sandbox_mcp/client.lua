@@ -5,8 +5,8 @@ net.Receive("sandbox_mcp_state",function()
     if not connected then camera,capture,imageChunks=nil,nil,nil end
     notification.AddLegacy(connected and "Sandbox MCP connected" or "Sandbox MCP disconnected",NOTIFY_GENERIC,4)
 end)
-local function consent(enable, screens)
-    net.Start("sandbox_mcp_consent") net.WriteBool(enable) net.WriteBool(screens==true) net.SendToServer()
+local function consent(enable, screens, e2)
+    net.Start("sandbox_mcp_consent") net.WriteBool(enable) net.WriteBool(screens==true) net.WriteBool(e2==true) net.SendToServer()
 end
 concommand.Add("sandbox_mcp_disconnect",function()consent(false,false)end)
 hook.Add("PopulateToolMenu","SandboxMCPPanel",function()
@@ -20,13 +20,21 @@ hook.Add("PopulateToolMenu","SandboxMCPPanel",function()
         panel:Help("1. Add the Sandbox MCP companion to your AI app.\n2. Start a Sandbox map.\n3. Connect here and ask your AI to build something.")
         local allow=vgui.Create("DCheckBoxLabel",panel)
         allow:SetText("Allow game screenshots and temporary camera") allow:SetValue(1) allow:SetDark(true) allow:SizeToContents() panel:AddItem(allow)
-        local connect=panel:Button("Connect AI") connect.DoClick=function()consent(true,allow:GetChecked())end
+        local e2=vgui.Create("DCheckBoxLabel",panel)
+        e2:SetText("Allow Expression 2 code (optional)") e2:SetValue(0) e2:SetDark(true) e2:SizeToContents() panel:AddItem(e2)
+        panel:Help("E2 programs use Wiremod's normal permissions and server limits. They can affect your other props through enabled E2 extensions. Leave this off for ordinary building.")
+        local connect=panel:Button("Connect AI") connect.DoClick=function()consent(true,allow:GetChecked(),e2:GetChecked())end
         local disconnect=panel:Button("Disconnect") disconnect.DoClick=function()consent(false,false)end
         panel:Help("Only the local host can connect. Your AI can inspect the game and change objects it creates. Screenshots capture only the game view. No API key belongs in this addon.")
         panel:Help("Undo: Z or the Undo tab; your AI can also undo an individual operation by name. Camera views reset after 30 seconds.")
         local copy=panel:Button("Copy setup command") copy.DoClick=function()SetClipboardText("sandbox-mcp setup") notification.AddLegacy("Setup command copied",NOTIFY_GENERIC,3)end
         panel:Help("Optional Wiremod support: buttons, gates, thrusters, displays and sensors. Install Wiremod, restart the map, then ask your AI to check its Wire catalog.")
         local wire=panel:Button("Get Wiremod (optional)") wire.DoClick=function()gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=160250458")end
+        panel:Help("To let the AI change a prop assembly you made, aim at it before opening this panel. Access includes moving, changing and deleting its parts. Disconnect revokes these grants.")
+        local grant=panel:Button("Grant aimed prop assembly") grant.DoClick=function()
+            net.Start("sandbox_mcp_grant") net.WriteEntity(LocalPlayer():GetEyeTrace().Entity) net.SendToServer()
+        end
+        local revoke=panel:Button("Revoke access to my assemblies") revoke.DoClick=function()net.Start("sandbox_mcp_revoke") net.SendToServer()end
         local badge=panel:Help("Need help? Run sandbox-mcp doctor in the companion folder.")
     end)
 end)

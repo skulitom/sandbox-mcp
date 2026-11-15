@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
- [Parameter(Mandatory=$true)][ValidateSet('create','upload','subscribe','inspect','publish')][string]$Action
+ [Parameter(Mandatory=$true)][ValidateSet('create','upload','subscribe','inspect','publish','update')][string]$Action
 )
 $ErrorActionPreference='Stop'
 $Addon='sandbox_mcp'
@@ -11,6 +11,7 @@ $manifest=Get-Content -LiteralPath (Join-Path $release 'release.json') -Raw | Co
 if($manifest.appid -ne 4000 -or $manifest.addon -ne $Addon){throw 'Wrong release identity'}
 $itemPath=Join-Path $release 'item.json'
 $receiptPath=Join-Path $release ($Action+'.json')
+if($Action -eq 'update'){$receiptPath=Join-Path $release ("update-$($manifest.version).json")}
 $env:SteamAppId='4000'; $env:SteamGameId='4000'
 . (Join-Path $PSScriptRoot 'steam-api.ps1')
 function Await-Call([UInt64]$call,[int]$callback,[int]$size){
@@ -77,22 +78,26 @@ try {
    Write-Output "Verified $count gallery media entries"
   } finally {[void][GModWorkshop]::SteamAPI_ISteamUGC_ReleaseQueryUGCRequest($ugc,$query)}
  }
- if($Action -in @('upload','publish')){
+ if($Action -in @('upload','publish','update')){
   if(Test-Path -LiteralPath $receiptPath){throw 'This mutation was already attempted; inspect receipts'}
   if($Action -eq 'publish' -and !$item.download_verified){throw 'Downloaded package verification is required'}
-  $gma=Join-Path $project 'release/sandbox-mcp-0.1.0.gma'
+  $version=($manifest.version -split '-')[0]
+  $gma=Join-Path $release "sandbox-mcp-$version.gma"
   if((Get-FileHash -LiteralPath $gma -Algorithm SHA256).Hash -ine $manifest.sha256){throw 'GMA differs from tested release'}
   $text=[IO.File]::ReadAllText((Join-Path $project 'release/description.txt'))
   $update=[GModWorkshop]::SteamAPI_ISteamUGC_StartItemUpdate($ugc,4000,$id)
   if($update -eq [UInt64]::MaxValue){throw 'Invalid update handle'}
   $visibility=if($Action -eq 'publish'){0}else{2}
-  if(![GModWorkshop]::SteamAPI_ISteamUGC_SetItemVisibility($ugc,$update,$visibility)){throw 'Visibility failed'}
+  # Existing releases retain their visibility, icon and gallery during updates.
+  if($Action -ne 'update' -and ![GModWorkshop]::SteamAPI_ISteamUGC_SetItemVisibility($ugc,$update,$visibility)){throw 'Visibility failed'}
   if(![GModWorkshop]::SteamAPI_ISteamUGC_SetItemTitle($ugc,$update,$manifest.title)){throw 'Title failed'}
   if(![GModWorkshop]::SteamAPI_ISteamUGC_SetItemDescription($ugc,$update,$text)){throw 'Description failed'}
   if(![GModTags]::Set($ugc,$update,[string[]]@('build','fun'))){throw 'Tags failed'}
-  if($Action -eq 'upload'){
+  if($Action -in @('upload','update')){
    # GMod uses a single GMA file as the UGC content path, as gmpublisher does.
    if(![GModWorkshop]::SteamAPI_ISteamUGC_SetItemContent($ugc,$update,$gma)){throw 'GMA content failed'}
+  }
+  if($Action -eq 'upload'){
    $icon=Join-Path $release 'workshop-preview.jpg'
    if(![GModWorkshop]::SteamAPI_ISteamUGC_SetItemPreview($ugc,$update,$icon)){throw 'Icon failed'}
    foreach($name in $manifest.gallery){
@@ -102,7 +107,8 @@ try {
    }
   }
   @{action=$Action;status='starting';item="$id";utc=[DateTime]::UtcNow.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath $receiptPath -Encoding UTF8
-  $call=[GModWorkshop]::SteamAPI_ISteamUGC_SubmitItemUpdate($ugc,$update,'0.1.0 beta - Build scenes through MCP with optional Wiremod integration.')
+  $notes=if($Action -eq 'update'){[IO.File]::ReadAllText((Join-Path $release 'workshop-changelog.txt'))}else{'0.1.0 beta - Build scenes through MCP with optional Wiremod integration.'}
+  $call=[GModWorkshop]::SteamAPI_ISteamUGC_SubmitItemUpdate($ugc,$update,$notes)
   $result=Await-Call $call 3404 16
   $result | ConvertTo-Json
   if([UInt64]$result.item -ne $id){throw 'Wrong returned item'}
