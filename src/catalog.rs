@@ -20,7 +20,7 @@ pub fn tools() -> Vec<Tool> {
         &["kind", "a", "b"],
     );
     let part = object(
-        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light"]},"model":string(),"preset":string(),"class":string(),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
+        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light","wire"]},"model":string(),"preset":string(),"class":string(),"settings":object(json!({"value":{"type":"number","minimum":-1000000,"maximum":1000000},"off":{"type":"number","minimum":-1000000,"maximum":1000000},"on":{"type":"number","minimum":-1000000,"maximum":1000000},"action":string(),"force":{"type":"number","minimum":1,"maximum":10000},"low_color":vector(),"high_color":vector(),"text_a":{"type":"string","maxLength":64},"text_b":{"type":"string","maxLength":64}}), &[]),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
         &["label"],
     );
     let edit = object(
@@ -37,9 +37,9 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "catalog",
-            "Discover installed models with bounds, vehicle presets or NPC classes. Query uses a case-insensitive substring. Paginated; model indexing runs incrementally in-game.",
+            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Paginated.",
             object(
-                json!({"kind":{"enum":["models","vehicles","npcs"]},"query":{"type":"string","maxLength":128},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
+                json!({"kind":{"enum":["models","vehicles","npcs","wire"]},"query":{"type":"string","maxLength":128},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &[],
             ),
             true,
@@ -67,7 +67,7 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "create",
-            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to the specified origin (default: host crosshair hit). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. Connections a/b are labels in this batch. Returns build_id, stable refs, bounds and operation_id for undo. Validates all parts first and rolls back spawn failures. Limit 128 per batch/512 live parts.",
+            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to origin (default: host crosshair). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. For Wiremod use kind=wire, preset and settings from catalog kind=wire; signal wiring is separate from physical links. Connections a/b are labels in this batch. Returns build_id, stable refs, bounds and operation_id. Validates and rolls back spawn failures. Limit 128 per batch/512 live parts.",
             object(
                 json!({"name":string(),"origin":vector(),"entities":{"type":"array","items":part,"minItems":1,"maxItems":128},"links":{"type":"array","items":link,"maxItems":256}}),
                 &["name", "entities"],
@@ -94,6 +94,43 @@ pub fn tools() -> Vec<Tool> {
             ),
             false,
             false,
+        ),
+        (
+            "wire_ports",
+            "Read actual Wiremod input/output names, types, current values and connected sources. Requires optional Wiremod addon. Supports read-only inspection of existing Wire entities; writes are restricted to this host's AI-created components.",
+            object(
+                json!({"refs":{"type":"array","items":string(),"minItems":1,"maxItems":32}}),
+                &["refs"],
+            ),
+            true,
+            false,
+        ),
+        (
+            "wire_connect",
+            "Connect a Wiremod output to an unwired input on AI-created components. from/to are stable entity refs; output/input are exact port names from wire_ports. Rejects type mismatches and feedback cycles. Returns operation_id for undo. This is signal wiring, not a physical constraint.",
+            object(
+                json!({"from":string(),"output":string(),"to":string(),"input":string()}),
+                &["from", "output", "to", "input"],
+            ),
+            false,
+            false,
+        ),
+        (
+            "wire_disconnect",
+            "Disconnect one Wiremod input between AI-created components. Undo restores the link if the port is still free and no cycle would result.",
+            object(json!({"to":string(),"input":string()}), &["to", "input"]),
+            false,
+            true,
+        ),
+        (
+            "wire_set",
+            "Change an AI-created Wire constant's numeric value, or set a toggle button to 0/off or 1/on. The real Wire network propagates the signal. Refuses wired buttons; change their source instead. Returns undo operation_id.",
+            object(
+                json!({"ref":string(),"value":{"type":"number","minimum":-1000000,"maximum":1000000}}),
+                &["ref", "value"],
+            ),
+            false,
+            true,
         ),
         (
             "undo",

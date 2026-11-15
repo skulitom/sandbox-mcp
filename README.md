@@ -4,7 +4,7 @@ An original Workshop-compatible Garry's Mod addon and portable MCP companion.
 Build scenes and contraptions, inspect the real game, test physics, capture the
 result and undo changes through useful structured tools.
 
-**Local preview 0.1.0. Nothing has been uploaded to Workshop.**
+**0.1.0 beta.** [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108) � [Download the Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest) and follow the [setup guide](docs/INSTALL.md).
 
 [Installation](docs/INSTALL.md) · [Validation and limits](docs/VALIDATION.md) ·
 [Workshop listing draft](docs/WORKSHOP.md) · [Design](docs/DESIGN.md)
@@ -21,16 +21,25 @@ creations; inspecting an existing prop does not authorize modifying it.
 Original code: MIT. Game assets remain owned by their authors; no game assets
 are redistributed by this project.
 
-The companion exposes 13 tools: connection diagnostics, model/vehicle/NPC
+The companion exposes 17 tools: connection diagnostics, model/vehicle/NPC
 catalogs, world inspection, placement traces, batched scene creation, edits,
 physical connections, targeted undo, build cleanup, temporary camera views,
-game screenshots, physics observation, and recent operation events.
+game screenshots, physics observation, recent operation events, and optional
+Wiremod port inspection, signal wiring/disconnection and source control.
+
+With [Wiremod](https://steamcommunity.com/sharedfiles/filedetails/?id=160250458)
+installed, create buttons, constants, gates, thrusters, indicators, screens,
+speedometers and GPS sensors. The AI can inspect live signals, wire a circuit,
+change its controls and undo individual changes. Wiremod remains optional; it
+is not bundled. Expression 2 and arbitrary Wire components are not supported yet.
 
 The setup wizard supports Codex, Claude Desktop, Cursor, GitHub Copilot/VS Code,
 and the older VS Code Local harness. It preserves other settings and backs up
 existing configuration files. Other stdio MCP clients can use `sandbox-mcp config`.
 
 ![A gate sculpture created through real MCP calls](docs/images/chromatic-gate.jpg)
+
+![An optional Wiremod pulse circuit](docs/images/wire-pulse.jpg)
 
 ![A drivable rover created through real MCP calls](docs/images/field-rover.jpg)
 
@@ -50,6 +59,8 @@ python tests/protocol_evaluation.py
 # Requires a connected Sandbox session:
 python tests/native_evaluation.py
 python tests/transport_evaluation.py
+# With optional Wiremod installed:
+python tests/wire_evaluation.py
 ```
 
 `tools/package.ps1` validates the addon with GMod's own `gmad.exe` and prepares the

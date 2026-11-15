@@ -36,7 +36,7 @@ end
 function S.notify()
     S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
         connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, capabilities={"inspect", "build", "undo", "physics", "camera"}})
+        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, wiremod=S.wireAvailable and S.wireAvailable() or false, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod"}})
     if not IsValid(S.owner) then return end
     net.Start("sandbox_mcp_state")
     net.WriteBool(S.connected)
@@ -67,6 +67,7 @@ hook.Add("PlayerDisconnected", "SandboxMCPConsent", function(ply) if ply == S.ow
 hook.Add("ShutDown", "SandboxMCPShutdown", function() S.disconnect() file.Delete(S.root .. "/status.json") end)
 
 include("sandbox_mcp/world.lua")
+include("sandbox_mcp/wire.lua")
 
 local handlers = S.handlers
 handlers.sandbox_events = function(a)
@@ -132,7 +133,7 @@ hook.Add("Think", "SandboxMCPBridge", function()
         if S.connected and not IsValid(S.owner) then S.disconnect() end
         S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
             connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), capabilities={"inspect", "build", "undo", "physics", "camera"}})
+            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), wiremod=S.wireAvailable and S.wireAvailable() or false, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod"}})
     end
     if clock < nextPoll then return end
     nextPoll = clock + 0.06

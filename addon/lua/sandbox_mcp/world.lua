@@ -35,6 +35,7 @@ local function info(e)
         material=e:GetMaterial(), color={e:GetColor().r,e:GetColor().g,e:GetColor().b}, skin=e:GetSkin()}
     if IsValid(p) then out.physics={mass=p:GetMass(), frozen=not p:IsMotionEnabled(), asleep=p:IsAsleep(), velocity=S.xyz(p:GetVelocity())} end
     if e:IsNPC() then out.health=e:Health() end
+    if meta and meta.wire then out.wire_preset=meta.wire end
     return out
 end
 function S.liveCount() local n=0 for e in pairs(tracked) do if IsValid(e) then n=n+1 end end return n end
@@ -96,7 +97,8 @@ H.sandbox_catalog = function(a)
         for id, v in pairs(list.Get("Vehicles")) do if (id .. " " .. (v.Name or "")):lower():find(query,1,true) then matches[#matches+1]={id=id,name=v.Name,model=v.Model,class=v.Class} end end
     elseif kind=="npcs" then
         for _, class in ipairs(npcClasses) do if class:find(query,1,true) then matches[#matches+1]=class end end
-    else error("kind must be models, vehicles, or npcs",0) end
+    elseif kind=="wire" then return S.wireCatalog(a)
+    else error("kind must be models, vehicles, npcs, or wire",0) end
     table.sort(matches,function(a,b) return (istable(a) and a.id or a)<(istable(b) and b.id or b) end)
     local offset, limit = math.floor(S.number(a.offset or 0,0,1000000)), math.floor(S.number(a.limit or 20,1,40))
     local items = {}
@@ -199,6 +201,8 @@ H.sandbox_create = function(a)
             if not list.Get("Vehicles")[p.preset] then error("Unknown vehicle preset; use sandbox_catalog kind=vehicles",0) end
         elseif p.kind=="npc" then
             if not table.HasValue(npcClasses,p.class) then error("Unsupported NPC class; use sandbox_catalog kind=npcs",0) end
+        elseif p.kind=="wire" then
+            S.validateWirePart(p)
         else error("Unknown entity kind",0) end
     end
     local function definition(label) if not labels[label] then error("Connection references unknown label "..tostring(label),0) end return labels[label] end
@@ -208,7 +212,7 @@ H.sandbox_create = function(a)
     local ok, err=pcall(function()
         for _,p in ipairs(a.entities) do
             local v=p.kind=="vehicle" and list.Get("Vehicles")[p.preset] or nil
-            local e=ents.Create(v and v.Class or p.kind=="npc" and p.class or "prop_physics")
+            local e=ents.Create(v and v.Class or p.kind=="npc" and p.class or p.kind=="wire" and S.wireClass(p.preset) or "prop_physics")
             if not IsValid(e) then error("Engine could not create "..p.label,0) end
             made[#made+1]=e parts[#parts+1]=e byLabel[p.label]=e
             if v then
@@ -218,12 +222,13 @@ H.sandbox_create = function(a)
             elseif p.model then e:SetModel(p.model) end
             e:SetPos(origin + S.vector(p.pos or {0,0,0})) e:SetAngles(angles(p.angles))
             e:SetCreator(S.owner) e:Spawn() e:Activate()
+            if p.kind=="wire" then S.setupWirePart(e,p) end
             if v and v.Members then table.Merge(e:GetTable(),v.Members) end
             if p.kind=="npc" and p.class=="npc_citizen" then e:SetModel("models/humans/group01/male_07.mdl") end
             if p.kind~="npc" and not IsValid(e:GetPhysicsObject()) then error("No physics for "..p.label,0) end
             if p.frozen==nil and p.kind~="npc" then p.frozen=true end
             local properties=table.Copy(p) properties.pos=nil properties.angles=nil apply(e,properties)
-            tracked[e]={owner=S.owner,build=buildID,label=p.label,revision=0}
+            tracked[e]={owner=S.owner,build=buildID,label=p.label,revision=0,wire=p.kind=="wire" and p.preset or nil}
             if p.kind=="light" then e:SetNWBool("SandboxMCPLight",true) end
         end
         for _,l in ipairs(a.links or {}) do makeLink(l,function(label)return byLabel[label]end,connections) end
@@ -234,6 +239,8 @@ H.sandbox_create = function(a)
     local result={} for _,e in ipairs(parts) do result[#result+1]=info(e) end
     return {build_id=buildID,operation_id=op,entities=result,connections=#connections}
 end
+-- Narrow adapter API shared with the optional Wiremod integration.
+S.entityRef, S.resolveEntity, S.entityInfo, S.operation = ref, resolve, info, operation
 H.sandbox_edit = function(a)
     if not istable(a.items) or #a.items<1 or #a.items>128 then error("Use 1–128 edits",0) end
     local entities,snapshots,seen={},{},{}

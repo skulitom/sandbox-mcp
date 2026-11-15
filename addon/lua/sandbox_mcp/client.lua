@@ -25,6 +25,8 @@ hook.Add("PopulateToolMenu","SandboxMCPPanel",function()
         panel:Help("Only the local host can connect. Your AI can inspect the game and change objects it creates. Screenshots capture only the game view. No API key belongs in this addon.")
         panel:Help("Undo: Z or the Undo tab; your AI can also undo an individual operation by name. Camera views reset after 30 seconds.")
         local copy=panel:Button("Copy setup command") copy.DoClick=function()SetClipboardText("sandbox-mcp setup") notification.AddLegacy("Setup command copied",NOTIFY_GENERIC,3)end
+        panel:Help("Optional Wiremod support: buttons, gates, thrusters, displays and sensors. Install Wiremod, restart the map, then ask your AI to check its Wire catalog.")
+        local wire=panel:Button("Get Wiremod (optional)") wire.DoClick=function()gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=160250458")end
         local badge=panel:Help("Need help? Run sandbox-mcp doctor in the companion folder.")
     end)
 end)

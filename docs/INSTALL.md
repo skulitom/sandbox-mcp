@@ -1,14 +1,13 @@
 # Sandbox MCP â€” start here
 
-This is a local preview. The Workshop page and companion download are not public
-yet. The addon and Windows companion are MIT licensed. You need Garry's Mod and
+The addon and Windows companion are MIT licensed. You need Garry's Mod and
 an AI application that supports local **stdio MCP** servers.
 
 ## Quick setup
 
-1. Subscribe to the Sandbox MCP Workshop addon when it is published. For this
-   preview, copy `sandbox-mcp-0.1.0.gma` to your game's `garrysmod/addons` folder.
-2. Extract the Windows companion ZIP and double-click **Setup.vbs**. Alternatively,
+1. Subscribe to [Sandbox MCP on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108).
+2. Download the [Windows companion ZIP](https://github.com/skulitom/sandbox-mcp/releases/latest),
+   extract it and double-click **Setup.vbs**. Alternatively,
    double-click `sandbox-mcp.exe`; both open the local setup page in your browser.
 3. Choose **Codex**, **Claude Desktop**, **Cursor**, or **GitHub Copilot / VS Code**, then click
    **Connect this app**. Setup installs the companion in your local application
@@ -59,7 +58,7 @@ models vary in building ability and may require tool approvals in their app.
   access and resets the temporary camera. Restarting/changing maps disconnects.
 - Only the local singleplayer/listen-server host can connect. Other players do
   not gain access by subscribing. Dedicated-server and remote-machine control
-  are not supported by this preview.
+  are not supported in 0.1.0.
 - The AI can inspect the world, but can edit/remove only objects it created for
   this host. It has no arbitrary Lua, console, shell, or filesystem tool.
 - Screenshots are optional. They contain the consenting host's game view, never
@@ -92,3 +91,29 @@ To uninstall: disconnect, remove only the `sandbox-mcp` entry from your AI
 client's configuration, unsubscribe/remove the addon, and remove the companion's
 `SandboxMCP` folder under local application data after closing the AI app. Your
 other MCP servers and game settings are independent of this addon.
+
+## Optional Wiremod
+
+Subscribe to [Wiremod](https://steamcommunity.com/sharedfiles/filedetails/?id=160250458)
+and restart the map. No additional companion or configuration is needed.
+`sandbox_status` reports `wiremod: true`; `sandbox_catalog` with `kind: wire`
+lists the supported components, settings and gate actions. The ordinary building
+and inspection tools work without Wiremod.
+
+Try: “Use Wiremod to build a button-controlled pulse display. Connect a timed
+gate to alternating coloured indicators and a screen. Inspect its signals and
+check that the button stops and starts it.”
+
+Create a component with `kind: wire`, a catalog `preset`, and optional `settings`.
+Use `sandbox_wire_ports` for exact port names/types, `sandbox_wire_connect` for
+output-to-input connections, and `sandbox_wire_set` for constants and buttons.
+Connections are real Wiremod links. Physical attachment is separate: use
+`sandbox_connect` to weld sensors or thrusters onto a vehicle. Thrusters push
+along local -Z; `[180,0,0]` points their thrust upward.
+
+Only AI-created components can be changed. Inputs already wired must first be
+explicitly disconnected. Port types must match. Instant feedback cycles are
+rejected; use the timed gates for pulses. Wiring, disconnection and source
+changes each return a specific undo operation. Expression 2, arbitrary Wire
+entity creation and control of manually created Wire components are outside
+this first release.

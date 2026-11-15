@@ -11,7 +11,7 @@ for version in ["2025-03-26","2025-11-25","2026-07-28"]:
         if version >= "2026-07-28":assert version in c.initialized["supportedVersions"],c.initialized
         else:assert c.initialized["protocolVersion"]==version,c.initialized
         result=c.request("tools/list",{})
-        assert len(result["tools"])==13
+        assert len(result["tools"])==17
         if version=="2026-07-28":
             assert result["resultType"]=="complete"
             assert result["ttlMs"]==0

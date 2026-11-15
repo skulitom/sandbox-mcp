@@ -36,7 +36,7 @@ Manual/native evidence:
   `artifacts/after-injected-rollback.json`.
 - The real browser wizard's Connect button created the isolated Codex
   configuration and displayed live game status.
-- GMod's `gmad.exe` accepts the four Lua files. The actual GMA mounted in server
+- GMod's `gmad.exe` accepted the original four Lua files. The actual GMA mounted in server
   and client realms, both reporting success and four files. Native and transport
   evaluations passed against the packed addon as well as development files.
 
@@ -75,7 +75,7 @@ session/entity IDs, and a clipped connection-status label.
   at 50,000. Large builds still incur normal rendering/physics costs.
 - Stock GMod constraints retain normal solver limits. StrongWeld is not required
   or bundled. NPC spawning supports the explicitly listed base classes.
-- No arbitrary Lua, scripted-entity spawning, or edits to pre-existing props.
+- No arbitrary Lua or arbitrary scripted-entity spawning, or edits to pre-existing props.
   Undo is session-local; cleanup is permanent. General blueprint save/load is
   not included; example scripts reproduce the demonstrations.
 - Setup alone runs a temporary loopback web server with an unpredictable URL and
@@ -93,3 +93,22 @@ session/entity IDs, and a clipped connection-status label.
 - [Cursor configuration](https://cursor.com/docs/mcp)
 - [Copilot / VS Code configuration](https://code.visualstudio.com/docs/agents/reference/mcp-configuration)
 - [Claude Desktop local setup](https://modelcontextprotocol.io/docs/2026-07-28/develop/connect-local-servers)
+
+## Wiremod release integration
+
+Optional Wiremod adapter tested against upstream commit
+`0464cecb3bdacc9ea886c0a4ae244e8f040269f4` on the same native GMod build.
+**21 real-MCP checks pass:** all eight component presets, port discovery,
+button/constant propagation through gates and displays, actual indicator colours,
+source undo, rewiring undo, occupied/type-mismatched ports, feedback rejection,
+ownership, bounded settings, physical thruster movement, velocity and GPS values.
+Missing Wiremod reports an actionable installation message and does not disable
+base tools. Wiremod code/assets are neither vendored nor included in the GMA.
+The pulse laboratory example also exercises a running timed gate.
+
+Reference: [Wiremod source](https://github.com/wiremod/wire).
+
+Final release GMA: five Lua files; extracted files match source exactly.
+Steam-downloaded archive SHA-256 equals the tested GMA. All native, transport
+and Wiremod checks above were repeated with the final portable release executable
+and GMA mounted in both realms.
