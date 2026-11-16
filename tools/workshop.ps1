@@ -74,7 +74,8 @@ try {
     $previews += [pscustomobject]@{index=$i;name=$name.ToString();type=$type;url=$url.ToString()}
    }
    $previews | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $release 'gallery.json') -Encoding UTF8
-   if($count -ne ($manifest.gallery.Count + [int][bool]$manifest.youtube_id)){throw "Unexpected gallery size: $count"}
+   $videoCount=if($manifest.youtube_ids){@($manifest.youtube_ids).Count}else{[int][bool]$manifest.youtube_id}
+   if($count -ne ($manifest.gallery.Count + $videoCount)){throw "Unexpected gallery size: $count"}
    Write-Output "Verified $count gallery media entries"
   } finally {[void][GModWorkshop]::SteamAPI_ISteamUGC_ReleaseQueryUGCRequest($ugc,$query)}
  }

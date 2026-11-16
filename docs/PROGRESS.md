@@ -50,3 +50,13 @@ fresh Steam download matches the native-tested GMA SHA-256 exactly. An anonymous
 GitHub companion ZIP download also matches. The source tag is `v0.2.0`.
 Temporary game addons were archived, all seven configuration paths were restored
 and hash-verified, owned game processes closed, and the Anode lease released.
+
+
+## 2026-11-16 — 0.3 Fin 3 release
+
+Added original optional Fin 3 adapter, two new tools (27 total), native force/RPM
+telemetry and blueprint persistence. Actual Workshop dependency tested in Anode:
+31 integration + 10 boundary + 9 packaged-restart/dependency checks passed.
+Native and Wire regressions passed. Dogfooded a five-part glider and bounded E2
+propeller motor. New 21-second Fin 3 video and existing 22.5-second Wiremod video
+published with Cutbolt projects and native evidence retained locally.

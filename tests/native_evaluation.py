@@ -23,7 +23,7 @@ def build(name,parts):
 cube="models/hunter/blocks/cube025x025x025.mdl"
 try:
     names=[t["name"] for t in c.request("tools/list",{})["tools"]]
-    check("25 advertised tools; no arbitrary Lua execution",len(names)==25 and not any("lua" in n for n in names))
+    check("27 advertised tools; no arbitrary Lua execution",len(names)==27 and not any("lua" in n for n in names))
     status=c.call("sandbox_status")
     check("Status never exposes authorization token",'"token"' not in json.dumps(status))
     initial=c.call("sandbox_inspect",{"owned_only":True,"limit":100})

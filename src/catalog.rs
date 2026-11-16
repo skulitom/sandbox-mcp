@@ -20,7 +20,7 @@ pub fn tools() -> Vec<Tool> {
         &["kind", "a", "b"],
     );
     let part = object(
-        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light","wire"]},"model":string(),"preset":string(),"class":string(),"settings":object(json!({"value":{"type":"number","minimum":-1000000,"maximum":1000000},"off":{"type":"number","minimum":-1000000,"maximum":1000000},"on":{"type":"number","minimum":-1000000,"maximum":1000000},"action":string(),"force":{"type":"number","minimum":1,"maximum":10000},"low_color":vector(),"high_color":vector(),"text_a":{"type":"string","maxLength":64},"text_b":{"type":"string","maxLength":64},"code":{"type":"string","minLength":1,"maxLength":32768},"range":{"type":"number","minimum":1,"maximum":65536},"show_beam":{"type":"boolean"}}), &[]),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
+        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light","wire"]},"model":string(),"preset":string(),"class":string(),"settings":object(json!({"value":{"type":"number","minimum":-1000000,"maximum":1000000},"off":{"type":"number","minimum":-1000000,"maximum":1000000},"on":{"type":"number","minimum":-1000000,"maximum":1000000},"action":string(),"force":{"type":"number","minimum":1,"maximum":10000},"low_color":vector(),"high_color":vector(),"text_a":{"type":"string","maxLength":64},"text_b":{"type":"string","maxLength":64},"code":{"type":"string","minLength":1,"maxLength":32768},"range":{"type":"number","minimum":1,"maximum":65536},"show_beam":{"type":"boolean"}}), &[]),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"fin3":fin3_settings(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
         &["label"],
     );
     let edit = object(
@@ -37,9 +37,9 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "catalog",
-            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
+            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire), or Fin 3 airfoils and setup guidance (kind=fin3). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
             object(
-                json!({"kind":{"enum":["models","vehicles","npcs","wire"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
+                json!({"kind":{"enum":["models","vehicles","npcs","wire","fin3"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &[],
             ),
             true,
@@ -67,7 +67,7 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "create",
-            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to origin (default: host crosshair). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. For Wiremod use kind=wire, preset and settings from catalog kind=wire; wire_links connects signals by part labels in the same atomic batch. Connections a/b are labels in this batch. Returns build_id, stable refs, bounds and operation_id. Validates and rolls back spawn failures. Limit 128 per batch/512 live parts.",
+            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to origin (default: host crosshair). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. For Wiremod use kind=wire, preset and settings from catalog kind=wire; wire_links connects signals by part labels in the same atomic batch. Connections a/b are labels in this batch. Optional fin3 settings on kind=prop attach real Fin 3 fins/propellers atomically. Returns build_id, stable refs, bounds and operation_id. Validates and rolls back spawn failures. Limit 128 per batch/512 live parts.",
             object(
                 json!({"name":string(),"origin":vector(),"entities":{"type":"array","items":part,"minItems":1,"maxItems":128},"links":{"type":"array","items":link,"maxItems":256},"wire_links":{"type":"array","items":wire_link(),"maxItems":256}}),
                 &["name", "entities"],
@@ -188,6 +188,7 @@ pub fn tools() -> Vec<Tool> {
         ),
     ];
     definitions.extend(workflow_tools());
+    definitions.extend(fin3_tools());
     definitions.into_iter().map(|(name,desc,schema,ro,destructive)|serde_json::from_value(json!({"name":format!("sandbox_{name}"),"description":desc,"inputSchema":schema,"annotations":{"readOnlyHint":ro,"destructiveHint":destructive,"idempotentHint":ro,"openWorldHint":name=="e2"}})).expect("tool schema")).collect()
 }
 
@@ -211,7 +212,7 @@ fn workflow_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
         ),
         (
             "blueprint",
-            "Save/list/export/import/load portable contraptions including physics constraints and Wire circuits. Names use letters, digits, hyphens or underscores. Save selects build_id or refs; export can select a build or saved name. Load creates a new build, frozen by default, with buttons off and E2 stopped. Imported data is untrusted; load validates supported parts. Saves persist across restarts in game DATA, per host.",
+            "Save/list/export/import/load portable contraptions including physics constraints, Wire circuits and Fin 3 settings. Names use letters, digits, hyphens or underscores. Save selects build_id or refs; export can select a build or saved name. Load creates a new build, frozen by default, with buttons off and E2 stopped. Imported data is untrusted; load validates supported parts. Saves persist across restarts in game DATA, per host.",
             object(
                 json!({"action":{"enum":["save","list","export","import","load"]},"name":string(),"title":string(),"build_id":string(),"refs":refs(),"blueprint":{"type":"object"},"origin":vector(),"angles":vector(),"frozen":{"type":"boolean"},"overwrite":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &["action"],
@@ -251,7 +252,7 @@ fn workflow_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
         ),
         (
             "measure",
-            "Record real physics and Wire values over 0.2-20 seconds. Select up to 8 refs or a small build. Returns timestamped poses, velocities, signals, max speed/tilt and displacement; interval 0.1-2 seconds. Read-only: start controls separately, then measure. Keeps native server quotas.",
+            "Record real physics, Fin 3 forces/RPM and Wire values over 0.2-20 seconds. Select up to 8 refs or a small build. Returns timestamped poses, velocities, signals, max speed/tilt and displacement; interval 0.1-2 seconds. Read-only: start controls separately, then measure. Keeps native server quotas.",
             object(
                 json!({"build_id":string(),"refs":{"type":"array","items":string(),"minItems":1,"maxItems":8},"seconds":{"type":"number","minimum":0.2,"maximum":20},"interval":{"type":"number","minimum":0.1,"maximum":2}}),
                 &[],
@@ -272,6 +273,34 @@ fn workflow_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
             object(
                 json!({"action":{"enum":["validate","upload","run","stop","status"]},"ref":string(),"code":{"type":"string","minLength":1,"maxLength":32768}}),
                 &["action"],
+            ),
+            false,
+            true,
+        ),
+    ]
+}
+
+fn fin3_settings() -> Value {
+    object(
+        json!({"kind":{"enum":["fin","propeller"]},"forward":vector(),"up":vector(),"airfoil":string(),"camber":{"type":"number","minimum":0,"maximum":100},"efficiency":{"type":"number","minimum":0.1,"maximum":1.5},"induced_drag":{"type":"number","minimum":0,"maximum":1},"disable_lowpass":{"type":"boolean"},"blades":{"type":"integer","minimum":2,"maximum":6},"diameter":{"type":"number","minimum":0.1,"maximum":6},"pitch":{"type":"number","minimum":-90,"maximum":90},"invert":{"type":"boolean"}}),
+        &["kind"],
+    )
+}
+fn fin3_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
+    vec![
+        (
+            "fin3_inspect",
+            "Read live Fin 3 wing/propeller settings and forces. Select refs or build_id. Reports lift/drag in newtons, surface area in m2, angle of attack in degrees, airspeed in m/s, propeller RPM/thrust/torque. Read-only inspection of existing props is allowed. Optional Fin 3 Workshop 3113528615 required.",
+            object(json!({"refs":refs(),"build_id":string()}), &[]),
+            true,
+            false,
+        ),
+        (
+            "fin3_apply",
+            "Attach, replace, tune or remove Fin 3 modifiers as one validated batch with targeted undo. Only owned/granted single-body unparented props; respects CanTool and Fin 3 server limits. Each item has ref plus full fin3 settings, or remove=true. Defaults: standard fin, local forward +X, up +Z, camber 0, efficiency/induced_drag 1; propeller 2 blades, diameter 2 meters, pitch 15 degrees. Axes must be cardinal unit vectors; fin axes perpendicular. Propellers need actual physical rotation from a motor/E2, not just pitch. Inspect before tuning; later or manual edits prevent stale undo. Does not change Fin 3 global settings. Blueprints retain these modifiers.",
+            object(
+                json!({"items":{"type":"array","items":object(json!({"ref":string(),"fin3":fin3_settings(),"remove":{"type":"boolean"}}), &["ref"]),"minItems":1,"maxItems":128}}),
+                &["items"],
             ),
             false,
             true,

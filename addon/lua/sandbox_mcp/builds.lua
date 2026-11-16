@@ -47,6 +47,7 @@ function S.captureBlueprint(a)
             elseif m.wire=="button" then p.source_state=e:GetOn() and 1 or 0
             elseif m.wire=="expression2" then p.settings.code=e.original end
         end
+        p.fin3=S.fin3Spec and S.fin3Spec(e) or nil
         data.entities[#data.entities+1]=p
     end
     local seen={}

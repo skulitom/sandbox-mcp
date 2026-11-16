@@ -93,3 +93,42 @@ native-tested archive byte for byte (SHA-256
 `abcfb255f3fb60c59109fbb0ad31f97fa59344b0ef00523715c1a99dd93e3da2`). The anonymous
 GitHub Windows ZIP download matches its published checksum. Workshop visibility,
 owner/app and the four existing gallery items were verified after updating.
+
+## 0.3 Fin 3 validation — 2026-11-16
+
+Tested in native Garry's Mod in Anode with the actual Fin 3 Workshop download
+(3113528615). Its Lua files match upstream commit
+`ee19289140a7cf390d8a936dc84c8a881e359211`. Wiremod came from the actual current
+Workshop package (160250458). Neither dependency is bundled.
+
+- 31 Fin integration checks: attachment/tuning/removal, local geometry and forces,
+  validation, quotas, atomic rollback, chained/stale undo, ownership, cleanup,
+  propeller settings, telemetry and rotated blueprint persistence.
+- 10 adversarial checks: native CanTool denial, injected partial native failure,
+  quota/physics rollback, manual changes, drag/damping restoration and parenting.
+- Existing native suite: 30 passed. Wire suite: 21 passed. MCP initialization:
+  three protocol versions, version 0.3.0 and 27 tools. Rust unit tests: 5 passed;
+  locked release build and Clippy with warnings denied passed.
+- The five-part glider flew about 4,890 Source units in six seconds, remaining
+  airborne under Fin 3 forces after a launch impulse. No helper supplied lift.
+- A bounded Wire E2 motor drove a Fin 3 propeller at 132–282 RPM with 93–156 N
+  measured thrust over a three-second sample, lifting its real physics body.
+
+Reproduction: `tests/fin3_evaluation.py`, `tests/fin3_boundary_evaluation.py` and
+`tools/dogfood_fin3.py`. Boundary tests require the private fixture from tests/;
+it is never included in the Workshop package. Evidence is retained locally in
+artifacts/fin3-*.json and artifacts/fin3-flight/.
+
+
+Packaged-addon restart checks: 5 passed with Fin 3, including previous-session
+wing/propeller and aircraft blueprints. Without Fin 3: 4 passed, including a
+helpful installation error, no partial build and ordinary prop construction.
+The GMA contains exactly ten Lua files matching source; private fixtures and
+dependency source are excluded. Owned Anode game sessions were closed, fixtures
+archived and the seven pre-test configuration paths restored.
+
+The 0.3.0 Steam download matches the tested package (SHA-256
+`1a3d0ac9ef58c0a75542df2328f66e54601e174d24d84feaa5cc3ae537ba90ab`).
+Extracted Lua files match the fresh-session package checks. The public Workshop
+page reports 0.3 features and six gallery entries: three screenshots plus the
+launch, Wiremod and Fin 3 videos.

@@ -37,6 +37,7 @@ local function info(e)
     if IsValid(p) then out.physics={mass=p:GetMass(), frozen=not p:IsMotionEnabled(), asleep=p:IsAsleep(), velocity=S.xyz(p:GetVelocity())} end
     if e:IsNPC() then out.health=e:Health() end
     if meta and meta.wire then out.wire_preset=meta.wire end
+    if S.fin3Read then out.fin3=S.fin3Read(e) end
     return out
 end
 function S.liveCount() local n=0 for e in pairs(tracked) do if IsValid(e) then n=n+1 end end return n end
@@ -123,7 +124,8 @@ H.sandbox_catalog = function(a)
     elseif kind=="npcs" then
         for _, class in ipairs(npcClasses) do if class:find(query,1,true) then matches[#matches+1]=class end end
     elseif kind=="wire" then return S.wireCatalog(a)
-    else error("kind must be models, vehicles, npcs, or wire",0) end
+    elseif kind=="fin3" then return S.fin3Catalog(a)
+    else error("kind must be models, vehicles, npcs, wire, or fin3",0) end
     table.sort(matches,function(a,b) return (istable(a) and a.id or a)<(istable(b) and b.id or b) end)
     local offset, limit = math.floor(S.number(a.offset or 0,0,1000000)), math.floor(S.number(a.limit or 20,1,40))
     local items = {}
@@ -209,7 +211,7 @@ local function makeLink(l,lookup,created)
     S.constraintRecords[c]={a=a,b=b,spec=spec}
     created[#created+1]=c if IsValid(rope) then created[#created+1]=rope end
 end
-local function removeAll(entities) for i=#entities,1,-1 do if IsValid(entities[i]) then entities[i]:Remove() end end end
+local function removeAll(entities) for i=#entities,1,-1 do if IsValid(entities[i]) then if S.fin3RemoveForCleanup then S.fin3RemoveForCleanup(entities[i]) end entities[i]:Remove() end end end
 H.sandbox_create = function(a)
     text(a.name,80)
     if not istable(a.entities) or #a.entities<1 or #a.entities>128 then error("Use 1–128 entities per batch",0) end
@@ -222,6 +224,10 @@ H.sandbox_create = function(a)
         validateChanges(p)
         S.vector(S.xyz(origin+S.vector(p.pos or {0,0,0})))
         p.kind=p.kind or "prop"
+        if p.fin3 then
+            if p.kind~="prop" then error("Fin 3 requires kind=prop",0) end
+            p.fin3=S.validateFin3(p.fin3)
+        end
         if p.kind=="prop" or p.kind=="light" then
             p.model=asset(p.model or (p.kind=="light" and "models/props_c17/lampShade001a.mdl" or "")):lower()
             if not util.IsValidModel(p.model) or not util.IsValidProp(p.model) then error("Not a valid physics prop: "..p.model,0) end
@@ -263,6 +269,9 @@ H.sandbox_create = function(a)
             if p.kind=="light" then e:SetNWBool("SandboxMCPLight",true) end
         end
         for _,l in ipairs(a.links or {}) do makeLink(l,function(label)return byLabel[label]end,connections) end
+        local aero={}
+        for _,p in ipairs(a.entities) do if p.fin3 then aero[#aero+1]={ref=ref(byLabel[p.label]),fin3=p.fin3} end end
+        if #aero>0 then S.fin3Apply(aero,false) end
         if a.wire_links and #a.wire_links>0 then
             local wires={}
             for _,l in ipairs(a.wire_links) do

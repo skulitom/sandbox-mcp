@@ -33,6 +33,19 @@ Example prompts:
 > Inspect the rover's mass and physics. Watch it settle for three seconds and
 > tell me whether anything moved unexpectedly.
 
+## Fin 3 flight and upgrading
+
+To use the new flight tools, install [Fin 3 - Superior Flight](https://steamcommunity.com/sharedfiles/filedetails/?id=3113528615)
+separately and restart the map. Wiremod is optional for motors/controllers; gliders
+only need Fin 3. Ask the AI to check `sandbox_catalog` with `kind: "fin3"`.
+
+Existing users: extract the **0.3.0 companion**, run Setup.vbs again with the AI app
+closed, then restart that app and the GMod map. Workshop updates the game addon;
+it cannot update an executable outside the game. Both sides should report 0.3.0.
+
+Try: "Build a Fin 3 glider. Set the local wing axes correctly, measure its lift
+and flight path, tune the tail, then save the working design as a blueprint."
+
 ## Other clients
 
 Run `sandbox-mcp config` from the companion folder and merge the printed entry
@@ -58,9 +71,9 @@ models vary in building ability and may require tool approvals in their app.
   access and resets the temporary camera. Restarting/changing maps disconnects.
 - Only the local singleplayer/listen-server host can connect. Other players do
   not gain access by subscribing. Dedicated-server and remote-machine control
-  are not supported in 0.2.0.
+  are not supported in 0.3.0.
 - The AI can inspect the world, but can edit/remove only objects it created for
-  this host, plus assemblies you explicitly grant using the panel. Grants in 0.2
+  this host, plus assemblies you explicitly grant using the panel. Grants in 0.3
   support your `prop_physics` assemblies only. Revoking a grant or disconnecting
   removes access without removing the props. There is no arbitrary Lua, console,
   shell or filesystem tool. E2 permission is broader, as explained below.
@@ -138,7 +151,7 @@ undo restores the old program stopped; it cannot reverse effects of running it.
 Disconnecting prevents new MCP commands but does not delete builds or stop their
 autonomous circuits. Stop the chip before disconnecting when that is desired.
 
-## Updating to 0.2
+## Updating to 0.3
 
 Let Steam update the addon, restart the map, and download/extract the new Windows
 ZIP. Close your AI app and rerun Setup to update the installed companion, then

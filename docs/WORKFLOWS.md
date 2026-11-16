@@ -1,4 +1,4 @@
-# Build, save, test and refine — 0.2
+# Build, save, test and refine — 0.3
 
 Start with `sandbox_status` and `sandbox_catalog`. The model catalog accepts
 `shape` filename hints, `physics_only`, and local model `min_size`/`max_size`
@@ -79,3 +79,46 @@ StrongWeld integration, arbitrary addon adapters, native GMod dupe export,
 mirroring, model thumbnails and remote/dedicated-server control are not included.
 The existing 0.1 tools remain available. Native physics costs and solver limits
 still apply; the MCP is a building interface, not a replacement physics engine.
+
+## Fin 3 wings and propellers
+
+Install Fin 3 separately, restart the map, then check `sandbox_catalog` with
+`kind: "fin3"`. It reports installed airfoils and the host's actual quotas.
+Normal building and Wire tools still work if Fin 3 is absent.
+
+A `sandbox_create` part can include:
+
+```json
+{"label":"wing","model":"models/hunter/plates/plate1x4.mdl",
+ "mass":12,"fin3":{"kind":"fin","forward":[1,0,0],"up":[0,0,1],
+ "airfoil":"standard","camber":20}}
+```
+
+Use `sandbox_fin3_apply` with `items: [{ref, fin3: {...}}]` to tune existing
+owned/granted props, or `{ref, remove: true}` to remove a modifier. Each batch
+validates before mutation, rolls back on failure and has a targeted undo.
+Native tool permissions, ownership and Fin 3 server limits still apply.
+
+Forward and up are **local**, perpendicular cardinal unit vectors. Surface area
+comes from the prop dimensions; changing mass does not enlarge a wing. Supported
+writes are unparented, single-body `prop_physics` entities. Unparent other props
+before changing their Fin 3 settings. Defaults/ranges are in the tool schema.
+
+`sandbox_fin3_inspect` returns actual settings and native telemetry.
+`sandbox_measure` samples that telemetry alongside motion and Wire signals:
+wing lift/drag in newtons, area in square metres, airspeed in metres/second,
+angle of attack in degrees; propeller RPM, thrust in newtons and torque in Nm.
+
+A propeller uses `kind: "propeller"`, `forward`, `blades`, `diameter` (metres),
+`pitch` (degrees) and `invert`. It needs real rotation from an axis/motor or
+separately permitted E2 controller. Setting blade pitch does not drive a motor.
+Use bounded torque/RPM feedback rather than an unlimited spin command.
+
+Blueprints/checkpoints preserve both fin and propeller settings, including local
+axes when rotating an assembly. They restore frozen, so inspect before release.
+E2 code with hard-coded entity IDs needs rebinding to newly loaded entities;
+blueprints do not rewrite arbitrary E2 source.
+
+`tools/dogfood_fin3.py` reproduces the five-part glider in `gm_flatgrass` using only
+public MCP calls. The video camera/capture helper is private test infrastructure,
+not part of the addon and does not supply flight forces.

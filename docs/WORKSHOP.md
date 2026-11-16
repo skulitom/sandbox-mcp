@@ -9,7 +9,7 @@ Existing native in-game cover and gallery retained.
 [h1]Build in Garry's Mod with your AI assistant[/h1]
 Find props, build a complete contraption, connect its parts, test the physics and inspect real game screenshots. Ask your AI to refine it, save it or undo a specific change.
 
-[b]New in 0.2: blueprints, checkpoints, complete Wire circuits, Expression 2, assembly tools and measurements.[/b]
+[b]New in 0.3: Fin 3 wings and propellers, live aerodynamic measurements and flight-ready blueprints.[/b]
 Existing users: update the Windows companion too, then restart your AI app and map.
 
 [b]Requires the free Windows companion and an AI app with local MCP support.[/b]
@@ -20,6 +20,8 @@ Workshop supplies the Lua addon. The companion supplies the MCP server and setup
 [url=https://github.com/skulitom/sandbox-mcp/blob/main/docs/WORKFLOWS.md]Blueprints, E2 and workflow guide[/url]
 [url=https://github.com/skulitom/sandbox-mcp]MIT-licensed source[/url]
 [url=https://www.youtube.com/watch?v=30DsajKY70I]Watch the in-game showcase[/url]
+[url=https://www.youtube.com/watch?v=OYWIcwcRxZA]Watch the Wiremod rocket demo[/url]
+[url=https://www.youtube.com/watch?v=vvdCXAwM8vg]Watch the Fin 3 flight demo[/url]
 
 [h2]Get started[/h2]
 [list]
@@ -34,7 +36,7 @@ Try: "Build me a cargo rover. Keep the driver's view clear, test its physics, ta
 
 [h2]Build, save and improve[/h2]
 [list]
-[*]25 structured tools, including all the original tools.
+[*]27 structured tools, including all the original tools.
 [*]Portable JSON blueprints: save, share, import and load supported contraptions at another position or rotation.
 [*]Named checkpoints for repeatable experiments in the current map.
 [*]Move/rotate an assembly together; align its bounding face with a target and chosen clearance.
@@ -56,9 +58,18 @@ Try: "Build an E2 hover platform with ground rangers. Save a checkpoint, measure
 
 Wiremod is a separate optional addon. Arbitrary Wire components and grants of manually built Wire contraptions are not supported.
 
+[h2]Optional Fin 3 - Superior Flight[/h2]
+With [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3113528615]Fin 3[/url], ask your AI to build an aircraft, set wing axes and airfoils, tune camber and propellers, then measure lift, drag, angle of attack, RPM and thrust while it flies.
+
+The forces come from Fin 3's own aerodynamic simulation. Blueprints preserve the settings. Native tool permissions and quotas apply. Writes support unparented single-body physics props. Propellers need real motor rotation; Wiremod E2 can supply a controller with your separate permission.
+
+Try: "Build a Fin 3 glider, measure its flight, improve the tail and save the design."
+
+Fin 3 is a separate optional addon, not bundled. Update the Windows companion to 0.3.0 to expose the new tools.
+
 [h2]You stay in control[/h2]
 Only the local singleplayer/listen-server host can connect. Ordinary editing tools affect AI-created objects and your prop assemblies that you explicitly grant through the panel. Revoke grants at any time without deleting the props. Screenshot and E2 permissions are separate. Disconnect blocks new commands and revokes grants; existing autonomous circuits keep running unless stopped.
 
-No arbitrary Lua, console, shell or filesystem tool. Windows x64 companion; local stdio MCP client required. Dedicated servers and remote machines are not supported in 0.2. Native physics and the AI model's building choices still matter. StrongWeld integration is not included.
+No arbitrary Lua, console, shell or filesystem tool. Windows x64 companion; local stdio MCP client required. Dedicated servers and remote machines are not supported in 0.3. Native physics and the AI model's building choices still matter. StrongWeld integration is not included.
 
-Original code: MIT. Wiremod is not bundled. Game assets belong to their authors.
+Original code: MIT. Wiremod and Fin 3 are not bundled. Game assets belong to their authors.

@@ -8,6 +8,7 @@ local function sample(e)
             for index,p in ipairs(ports[kind]) do if index<=32 then result[kind][p.name]=p.value end end
         end
     end
+    if S.fin3Read then result.fin3=S.fin3Read(e) end
     return result
 end
 H.sandbox_measure=function(a,request)
