@@ -86,7 +86,10 @@ function S.setupWirePart(e,p)
 end
 local function wireEntity(id,owned)
     requireWire() local e=S.resolveEntity(id,owned)
-    if owned and not S.tracked[e].wire then error("Only AI-created Wire components can be wired",0) end
+    if owned and not S.tracked[e].wire then
+        if not S.flowmodAvailable or not S.flowmodAvailable() or not FlowMod.IsComponent(e) then error("Only AI-created Wire or FlowMod components can be wired",0) end
+        if not FlowMod.CanTouch(S.owner,e) then error("FlowMod ownership or server tool permission denied",0) end
+    end
     if not e.Inputs and not e.Outputs then error("Entity has no Wire ports",0) end
     return e
 end

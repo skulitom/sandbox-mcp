@@ -9,6 +9,7 @@ local function sample(e)
         end
     end
     if S.fin3Read then result.fin3=S.fin3Read(e) end
+    if S.flowmodRead then result.flowmod=S.flowmodRead(e) end
     return result
 end
 H.sandbox_measure=function(a,request)
@@ -52,6 +53,7 @@ H.sandbox_diagnose=function(a)
     local mass,frozen=0,0
     for _,e in ipairs(entities) do
         local info=S.entityInfo(e) parts[#parts+1]=info
+        if info.flowmod and info.flowmod.fault~="" then issue("flowmod_fault",e,info.flowmod.fault) end
         if info.physics then mass=mass+info.physics.mass if info.physics.frozen then frozen=frozen+1 end end
         for name,p in pairs(e.Inputs or {}) do
             if not IsValid(p.Src) then issue("unconnected_input",e,name)

@@ -17,6 +17,11 @@ standard MCP over stdio using the official Rust SDK. No game DLL, localhost
 network bypass, API key, or model-specific code is required by the bridge.
 An MCP-capable AI client supplies the model.
 
+**Unreleased development:** [FlowMod integration](docs/FLOWMOD.md) adds hydraulic
+and pneumatic construction, inspection, tuning and fluid blueprints (31 tools in
+this branch). It needs local matching companion/addon builds plus FlowMod; it is
+not part of the public 0.3.0 download yet.
+
 The addon is disabled until the host connects through Q > Utilities >
 Sandbox MCP > Connection. Disconnect revokes the current connection. Building tools own their
 creations; inspecting an existing prop does not authorize modifying it. The host

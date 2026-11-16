@@ -38,6 +38,7 @@ local function info(e)
     if e:IsNPC() then out.health=e:Health() end
     if meta and meta.wire then out.wire_preset=meta.wire end
     if S.fin3Read then out.fin3=S.fin3Read(e) end
+    if S.flowmodRead then out.flowmod=S.flowmodRead(e) end
     return out
 end
 function S.liveCount() local n=0 for e in pairs(tracked) do if IsValid(e) then n=n+1 end end return n end
@@ -125,7 +126,8 @@ H.sandbox_catalog = function(a)
         for _, class in ipairs(npcClasses) do if class:find(query,1,true) then matches[#matches+1]=class end end
     elseif kind=="wire" then return S.wireCatalog(a)
     elseif kind=="fin3" then return S.fin3Catalog(a)
-    else error("kind must be models, vehicles, npcs, wire, or fin3",0) end
+    elseif kind=="flowmod" then return S.flowmodCatalog(a)
+    else error("kind must be models, vehicles, npcs, wire, fin3, or flowmod",0) end
     table.sort(matches,function(a,b) return (istable(a) and a.id or a)<(istable(b) and b.id or b) end)
     local offset, limit = math.floor(S.number(a.offset or 0,0,1000000)), math.floor(S.number(a.limit or 20,1,40))
     local items = {}
@@ -238,6 +240,8 @@ H.sandbox_create = function(a)
             if not table.HasValue(npcClasses,p.class) then error("Unsupported NPC class; use sandbox_catalog kind=npcs",0) end
         elseif p.kind=="wire" then
             S.validateWirePart(p)
+        elseif p.kind=="flowmod" then
+            S.validateFlowPart(p)
         else error("Unknown entity kind",0) end
     end
     local function definition(label) if not labels[label] then error("Connection references unknown label "..tostring(label),0) end return labels[label] end
@@ -247,9 +251,11 @@ H.sandbox_create = function(a)
     local ok, err=pcall(function()
         for _,p in ipairs(a.entities) do
             local v=p.kind=="vehicle" and list.Get("Vehicles")[p.preset] or nil
-            local e=ents.Create(v and v.Class or p.kind=="npc" and p.class or p.kind=="wire" and S.wireClass(p.preset) or "prop_physics")
+            local e=p.kind=="flowmod" and FlowMod.Create(S.owner,p.flowmod.kind,origin+S.vector(p.pos or {0,0,0}),angles(p.angles),p.flowmod,true)
+                or ents.Create(v and v.Class or p.kind=="npc" and p.class or p.kind=="wire" and S.wireClass(p.preset) or "prop_physics")
             if not IsValid(e) then error("Engine could not create "..p.label,0) end
             made[#made+1]=e parts[#parts+1]=e byLabel[p.label]=e
+            if p.kind~="flowmod" then
             if v then
                 e:SetModel(v.Model)
                 for k,value in pairs(v.KeyValues or {}) do e:SetKeyValue(k,value) end
@@ -258,6 +264,7 @@ H.sandbox_create = function(a)
             e:SetPos(origin + S.vector(p.pos or {0,0,0})) e:SetAngles(angles(p.angles))
             if p.kind=="wire" and p.preset=="expression2" then e:SetPlayer(S.owner) e.player=S.owner end
             e:SetCreator(S.owner) e:Spawn() e:Activate()
+            end
             if p.kind=="wire" and p.preset=="expression2" then e:SetInstancePlayer(S.owner) end
             if p.kind=="wire" then S.setupWirePart(e,p) end
             if v and v.Members then table.Merge(e:GetTable(),v.Members) end
@@ -268,7 +275,18 @@ H.sandbox_create = function(a)
             tracked[e]={owner=S.owner,build=buildID,label=p.label,revision=0,wire=p.kind=="wire" and p.preset or nil,spec=table.Copy(p)}
             if p.kind=="light" then e:SetNWBool("SandboxMCPLight",true) end
         end
+        for _,p in ipairs(a.entities) do if p.kind=="flowmod" and p.flowmod.anchors then
+            S.flowmodAttach(byLabel[p.label],p.flowmod.anchors,function(label)
+                if not byLabel[label] then error("Cylinder references unknown anchor label",0) end return byLabel[label]
+            end)
+        end end
         for _,l in ipairs(a.links or {}) do makeLink(l,function(label)return byLabel[label]end,connections) end
+        if a.fluid_links and #a.fluid_links>0 then
+            local _,hoses=S.flowmodConnect(a.fluid_links,function(label)
+                if not byLabel[label] then error("Fluid link references unknown part label",0) end return byLabel[label]
+            end,false)
+            for _,hose in ipairs(hoses) do connections[#connections+1]=hose end
+        end
         local aero={}
         for _,p in ipairs(a.entities) do if p.fin3 then aero[#aero+1]={ref=ref(byLabel[p.label]),fin3=p.fin3} end end
         if #aero>0 then S.fin3Apply(aero,false) end

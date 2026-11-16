@@ -23,6 +23,7 @@ local function validate(data)
     if not istable(data) or data.format~="sandbox-mcp-blueprint" or data.version~=1 or not istable(data.entities) or #data.entities<1 or #data.entities>128 then error("Unsupported blueprint format or part count",0) end
     if not isstring(data.name) or #data.name>80 then error("Invalid blueprint title",0) end
     if not istable(data.links) or #data.links>256 or not istable(data.wire_links) or #data.wire_links>256 then error("Blueprint connection limits exceeded",0) end
+    if data.fluid_links and (not istable(data.fluid_links) or #data.fluid_links>128) then error("Blueprint fluid connection limits exceeded",0) end
     local raw=util.TableToJSON(data)
     if not raw or #raw>200000 then error("Blueprint exceeds 200 KB",0) end
     return data,raw
@@ -50,6 +51,7 @@ function S.captureBlueprint(a)
         p.fin3=S.fin3Spec and S.fin3Spec(e) or nil
         data.entities[#data.entities+1]=p
     end
+    if S.flowmodBlueprint then S.flowmodBlueprint(entities,selected,data) end
     local seen={}
     for _,e in ipairs(entities) do
         for _,constraintInfo in ipairs(constraint.GetTable(e) or {}) do
@@ -57,9 +59,16 @@ function S.captureBlueprint(a)
             if IsValid(c) and not seen[c] then
                 seen[c]=true
                 local record=S.constraintRecords[c]
+                if not record and S.flowmodAvailable and S.flowmodAvailable() and (c:GetClass()=="flowmod_hose" or c:GetClass()=="flowmod_attachment") then
+                    -- Captured as fluid links and cylinder local anchors above.
+                    for _,endpoint in ipairs({c.Ent1,c.Ent2,c.Ent3}) do
+                        if IsValid(endpoint) and not selected[endpoint] then error("A FlowMod connection leaves this selection; include its controller and anchor props",0) end
+                    end
+                else
                 if not record then error("Unsupported or manually changed constraint; remove it or use supported MCP links before saving",0) end
                 if not selected[record.a] or not selected[record.b] then error("A constraint leaves the selected build; include both endpoints using refs",0) end
                 local l=table.Copy(record.spec) l.a=selected[record.a] l.b=selected[record.b] data.links[#data.links+1]=l
+                end
             end
         end
         for name,p in pairs(e.Inputs or {}) do
@@ -83,7 +92,7 @@ function S.loadBlueprint(data,a)
         -- The activation of buttons is separate from restoring the graph.
         p.source_state=nil
     end
-    local result=H.sandbox_create({name=a.title or data.name,origin=a.origin,entities=parts,links=table.Copy(data.links),wire_links=table.Copy(data.wire_links)})
+    local result=H.sandbox_create({name=a.title or data.name,origin=a.origin,entities=parts,links=table.Copy(data.links),wire_links=table.Copy(data.wire_links),fluid_links=table.Copy(data.fluid_links or {})})
     return result
 end
 H.sandbox_blueprint=function(a)

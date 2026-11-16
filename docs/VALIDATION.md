@@ -132,3 +132,17 @@ The 0.3.0 Steam download matches the tested package (SHA-256
 Extracted Lua files match the fresh-session package checks. The public Workshop
 page reports 0.3 features and six gallery entries: three screenshots plus the
 launch, Wiremod and Fin 3 videos.
+
+## Unreleased FlowMod integration
+
+The development branch has 31 tools; the public release described above remains
+unchanged. Real Anode tests through MCP stdio pass 34 hydraulic/Wire checks,
+19 pneumatic/import checks without Wiremod (16 earlier checks also passed with
+Wiremod), 12 native permission/failure checks, and five checks without either
+optional addon. The existing 21-check Wire suite also passes. Three protocol
+versions, five Rust tests, Lua 5.1 compilation and Clippy pass.
+
+See [FlowMod integration](FLOWMOD.md) for the exact scope and scripts. Native
+motion evidence includes oil and stored-air lifts and a 200 kg twin-cylinder
+platform. These are development receipts, not a published release or a claim
+that FlowMod's broader production acceptance is finished.

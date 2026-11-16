@@ -20,7 +20,7 @@ pub fn tools() -> Vec<Tool> {
         &["kind", "a", "b"],
     );
     let part = object(
-        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light","wire"]},"model":string(),"preset":string(),"class":string(),"settings":object(json!({"value":{"type":"number","minimum":-1000000,"maximum":1000000},"off":{"type":"number","minimum":-1000000,"maximum":1000000},"on":{"type":"number","minimum":-1000000,"maximum":1000000},"action":string(),"force":{"type":"number","minimum":1,"maximum":10000},"low_color":vector(),"high_color":vector(),"text_a":{"type":"string","maxLength":64},"text_b":{"type":"string","maxLength":64},"code":{"type":"string","minLength":1,"maxLength":32768},"range":{"type":"number","minimum":1,"maximum":65536},"show_beam":{"type":"boolean"}}), &[]),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"fin3":fin3_settings(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
+        json!({"label":string(),"kind":{"enum":["prop","vehicle","npc","light","wire","flowmod"]},"model":string(),"preset":string(),"class":string(),"settings":object(json!({"value":{"type":"number","minimum":-1000000,"maximum":1000000},"off":{"type":"number","minimum":-1000000,"maximum":1000000},"on":{"type":"number","minimum":-1000000,"maximum":1000000},"action":string(),"force":{"type":"number","minimum":1,"maximum":10000},"low_color":vector(),"high_color":vector(),"text_a":{"type":"string","maxLength":64},"text_b":{"type":"string","maxLength":64},"code":{"type":"string","minLength":1,"maxLength":32768},"range":{"type":"number","minimum":1,"maximum":65536},"show_beam":{"type":"boolean"}}), &[]),"pos":vector(),"angles":vector(),"color":{"type":"array","items":{"type":"integer","minimum":0,"maximum":255},"minItems":3,"maxItems":3},"material":string(),"fin3":fin3_settings(),"flowmod":flowmod_part(),"skin":{"type":"integer","minimum":0,"maximum":32},"mass":{"type":"number","minimum":1,"maximum":5000},"frozen":{"type":"boolean"}}),
         &["label"],
     );
     let edit = object(
@@ -37,9 +37,9 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "catalog",
-            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire), or Fin 3 airfoils and setup guidance (kind=fin3). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
+            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire), Fin 3 airfoils (kind=fin3), or FlowMod fluid components, ports, ranges and circuit guidance (kind=flowmod). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
             object(
-                json!({"kind":{"enum":["models","vehicles","npcs","wire","fin3"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
+                json!({"kind":{"enum":["models","vehicles","npcs","wire","fin3","flowmod"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &[],
             ),
             true,
@@ -67,9 +67,9 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "create",
-            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to origin (default: host crosshair). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. For Wiremod use kind=wire, preset and settings from catalog kind=wire; wire_links connects signals by part labels in the same atomic batch. Connections a/b are labels in this batch. Optional fin3 settings on kind=prop attach real Fin 3 fins/propellers atomically. Returns build_id, stable refs, bounds and operation_id. Validates and rolls back spawn failures. Limit 128 per batch/512 live parts.",
+            "Create a named scene in one batch, with optional physical connections. Entity pos/angles are relative to origin (default: host crosshair). Props default frozen. Vehicle presets: Jeep, Airboat, Seat_Jeep. For Wiremod use kind=wire, preset and settings from catalog kind=wire; wire_links connects signals by part labels in the same atomic batch. Connections a/b are labels in this batch. Optional fin3 settings on kind=prop attach real Fin 3 fins/propellers atomically. For FlowMod use kind=flowmod and flowmod settings from catalog; cylinder anchors use same-batch prop labels and local physics-body points. fluid_links connect fluid ports by labels. Sources start off and valves hold; use flowmod_tune to activate. Returns build_id, stable refs, bounds and operation_id. Validates and rolls back spawn failures. Limit 128 per batch/512 live parts.",
             object(
-                json!({"name":string(),"origin":vector(),"entities":{"type":"array","items":part,"minItems":1,"maxItems":128},"links":{"type":"array","items":link,"maxItems":256},"wire_links":{"type":"array","items":wire_link(),"maxItems":256}}),
+                json!({"name":string(),"origin":vector(),"entities":{"type":"array","items":part,"minItems":1,"maxItems":128},"links":{"type":"array","items":link,"maxItems":256},"wire_links":{"type":"array","items":wire_link(),"maxItems":256},"fluid_links":{"type":"array","items":fluid_link(),"maxItems":128}}),
                 &["name", "entities"],
             ),
             false,
@@ -189,6 +189,7 @@ pub fn tools() -> Vec<Tool> {
     ];
     definitions.extend(workflow_tools());
     definitions.extend(fin3_tools());
+    definitions.extend(flowmod_tools());
     definitions.into_iter().map(|(name,desc,schema,ro,destructive)|serde_json::from_value(json!({"name":format!("sandbox_{name}"),"description":desc,"inputSchema":schema,"annotations":{"readOnlyHint":ro,"destructiveHint":destructive,"idempotentHint":ro,"openWorldHint":name=="e2"}})).expect("tool schema")).collect()
 }
 
@@ -212,7 +213,7 @@ fn workflow_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
         ),
         (
             "blueprint",
-            "Save/list/export/import/load portable contraptions including physics constraints, Wire circuits and Fin 3 settings. Names use letters, digits, hyphens or underscores. Save selects build_id or refs; export can select a build or saved name. Load creates a new build, frozen by default, with buttons off and E2 stopped. Imported data is untrusted; load validates supported parts. Saves persist across restarts in game DATA, per host.",
+            "Save/list/export/import/load portable contraptions including physics constraints, Wire circuits, Fin 3 settings and FlowMod fluid circuits. FlowMod saves settings and prop anchors, not pressure or active commands. Include every hose endpoint and both anchor props. Wire sources can activate copies. Names use letters, digits, hyphens or underscores. Save selects build_id or refs; export can select a build or saved name. Load creates a new build, frozen by default, with buttons off and E2 stopped. Imported data is untrusted; load validates supported parts. Saves persist across restarts in game DATA, per host.",
             object(
                 json!({"action":{"enum":["save","list","export","import","load"]},"name":string(),"title":string(),"build_id":string(),"refs":refs(),"blueprint":{"type":"object"},"origin":vector(),"angles":vector(),"frozen":{"type":"boolean"},"overwrite":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &["action"],
@@ -301,6 +302,63 @@ fn fin3_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
             object(
                 json!({"items":{"type":"array","items":object(json!({"ref":string(),"fin3":fin3_settings(),"remove":{"type":"boolean"}}), &["ref"]),"minItems":1,"maxItems":128}}),
                 &["items"],
+            ),
+            false,
+            true,
+        ),
+    ]
+}
+
+fn fluid_link() -> Value {
+    object(
+        json!({"a":string(),"b":string(),"port_a":string(),"port_b":string(),"conductance":{"type":"number","minimum":0.001,"maximum":10}}),
+        &["a", "b", "port_a", "port_b"],
+    )
+}
+fn flowmod_part() -> Value {
+    object(
+        json!({
+            "kind":{"enum":["reservoir","pump","compressor","airtank","exhaust","valve","restrictor","gauge","tee","check","relief","cylinder"]},
+            "medium":{"enum":["oil","air"]},"pressure":{"type":"number","minimum":1,"maximum":200},
+            "flow":{"type":"number","minimum":0.1,"maximum":120},"opening":{"type":"number","minimum":0,"maximum":1},
+            "volume":{"type":"number","minimum":0.1,"maximum":100},"bore":{"type":"number","minimum":10,"maximum":100},"stroke":{"type":"number","minimum":8,"maximum":300},
+            "anchors":object(json!({"a":string(),"b":string(),"point_a":vector(),"point_b":vector(),"minimum":{"type":"number","minimum":8,"maximum":400}}), &["a","b"])
+        }),
+        &["kind"],
+    )
+}
+fn flowmod_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
+    vec![
+        (
+            "flowmod_inspect",
+            "Read native FlowMod component settings, gauge pressures, signed hose flow, faults, cylinder anchors and load forces. Select build_id or refs. Also included in inspect/measure. Requires separately installed FlowMod.",
+            object(json!({"build_id":string(),"refs":refs()}), &[]),
+            true,
+            false,
+        ),
+        (
+            "flowmod_connect",
+            "Connect 1-128 fluid hoses atomically between owned FlowMod components. a/b are stable refs; exact port names come from flowmod_inspect. One hose per port; use tees to branch. Oil and air cannot mix. Returns hose refs and targeted undo. conductance defaults to 0.5 for oil (L/s/bar) or 5 for air (standard L/s per log absolute-pressure ratio).",
+            object(
+                json!({"links":{"type":"array","items":fluid_link(),"minItems":1,"maxItems":128}}),
+                &["links"],
+            ),
+            false,
+            false,
+        ),
+        (
+            "flowmod_disconnect",
+            "Remove one owned fluid hose by its ref from flowmod_inspect. Targeted undo reconnects only if both ports remain free and permitted.",
+            object(json!({"ref":string()}), &["ref"]),
+            false,
+            true,
+        ),
+        (
+            "flowmod_tune",
+            "Tune one owned FlowMod component. control: sources 0/off or 1/on, directional valve -1/retract, 0/hold, 1/extend (proportional). pressure gauge bar (air max20), flow L/min, opening0..1, volume litres. Supported settings by kind in catalog. Rejects settings currently driven by Wire; edit their source instead. Targeted undo preserves later edits; volume undo may require venting. No pressure reset or physics teleport.",
+            object(
+                json!({"ref":string(),"control":{"type":"number","minimum":-1,"maximum":1},"settings":object(json!({"pressure":{"type":"number","minimum":1,"maximum":200},"flow":{"type":"number","minimum":0.1,"maximum":120},"opening":{"type":"number","minimum":0,"maximum":1},"volume":{"type":"number","minimum":0.1,"maximum":100}}),&[])}),
+                &["ref"],
             ),
             false,
             true,

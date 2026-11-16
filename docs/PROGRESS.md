@@ -60,3 +60,36 @@ telemetry and blueprint persistence. Actual Workshop dependency tested in Anode:
 Native and Wire regressions passed. Dogfooded a five-part glider and bounded E2
 propeller motor. New 21-second Fin 3 video and existing 22.5-second Wiremod video
 published with Cutbolt projects and native evidence retained locally.
+
+## 2026-11-16 — local FlowMod adapter milestone (unreleased)
+
+Added optional FlowMod support to structured creation, inspection, measurement,
+diagnostics and portable blueprints, plus four tools for fluid inspection, hose
+connection/disconnection and tuning (31 total). Creation uses the real FlowMod
+factories and normal permissions; no helper supplies actuator forces. Wire ports
+on AI-created FlowMod parts work with existing signal tools. Tuning refuses
+Wire-driven settings, native failures roll back, and stale undo refuses later
+changes/replaced hoses. Cylinder anchors and hoses cannot retain old map refs in
+blueprints; partial selections fail.
+
+Anode evidence: 34 hydraulic/Wire checks, 19 air/import checks without Wiremod
+(the earlier 16 also passed with Wire), 12 permission/failure checks, five cold
+checks with FlowMod and Wire absent, and 21 existing Wire regression checks.
+Three protocol versions, five Rust unit tests, Clippy and 12 Lua syntax checks
+pass. A public-MCP dogfood script built a 12-part twin-cylinder 200 kg lift,
+saved its blueprint and measured 8.7 Source units of lift over three seconds.
+Real screenshot and transcripts are under artifacts/flowmod-dual-lift. Source
+hashes for all 11 installed addon Lua files are retained.
+
+Failed test receipts remain: a test guessed a constant's output name instead of
+reading its ports, a rotated copy exceeded normal 800-unit placement reach, and
+the first dual-lift opening was too narrow for its demonstration threshold. The
+last demonstration explicitly tunes the valve wider through MCP. The no-Wire
+cold session's private fixture initially spawned its default rig because boot.json
+is consumed on launch; that owned rig was cleared and the player pose restored
+before MCP tests (zero tracked parts confirmed).
+
+No package, remote commit, Workshop upload or GitHub release was published.
+FlowMod's broader production goal remains active. Owned game sessions exited,
+development addons/test blueprints were archived, seven config states restored
+and verified, desktop Steam stayed in session 1, and the Anode lease was released.
