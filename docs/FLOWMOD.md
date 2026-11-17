@@ -1,9 +1,10 @@
-# FlowMod integration (unreleased)
+# FlowMod integration
 
-This development branch adds four tools and FlowMod support to existing creation,
-measurement and blueprint tools. It requires matching development builds of the
-Sandbox MCP companion and addon, plus FlowMod installed separately. The public
-0.3.0 release does not contain these additions. Nothing has been published.
+Sandbox MCP 0.4.0 adds four tools and FlowMod support to existing creation,
+measurement and blueprint tools. Update both the addon and the
+[Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest),
+then install [FlowMod](https://steamcommunity.com/sharedfiles/filedetails/?id=3841216963)
+separately. The bridge has 31 tools in total.
 
 The fluid simulation runs in FlowMod. This adapter calls the same server APIs as
 the toolgun; it does not emulate pressure, apply extra lifting forces or teleport
@@ -128,3 +129,7 @@ demo threshold; the final example explicitly tunes it wider. Both receipts remai
 
 These checks do not replace FlowMod's wider multiplayer, performance, UI and
 release acceptance work. Development evidence is retained under `artifacts/`.
+
+For the 0.4.0 release, both packaged addons were rechecked together: 34 hydraulic,
+19 pneumatic/import, 12 boundary and 21 Wire checks passed. A separate cold launch
+without FlowMod or Wiremod passed five checks. See [release validation](VALIDATION.md).

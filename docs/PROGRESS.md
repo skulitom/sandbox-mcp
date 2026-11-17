@@ -93,3 +93,19 @@ No package, remote commit, Workshop upload or GitHub release was published.
 FlowMod's broader production goal remains active. Owned game sessions exited,
 development addons/test blueprints were archived, seven config states restored
 and verified, desktop Steam stayed in session 1, and the Anode lease was released.
+
+## 2026-11-17 — 0.4 FlowMod release preparation
+
+FlowMod 0.1.0 is public at Workshop item 3841216963, after Artem approved publication.
+Prepared matching Sandbox MCP 0.4.0 addon/Windows companion and updated guides.
+The actual release GMAs passed 91 native checks across dependency-present and
+dependency-absent Anode sessions. Verified 27 and 11 mounted Lua hashes respectively;
+five Rust tests, Clippy, 24 setup checks, three protocol versions and 19 Lua syntax
+checks passed. Both game sessions exited normally and the eight configuration
+states were restored. User-created blueprints and unrelated addons are preserved.
+
+The first cold absence request arrived before the private fixture's consent timer
+and was correctly refused; after consent all five checks passed. The private
+server-side quit request was blocked by GMod; normal client-console quit was used
+instead and that unused fixture request handler was removed. Fixtures are excluded
+from the GMA. Public release receipts and download verification follow below.

@@ -133,10 +133,10 @@ Extracted Lua files match the fresh-session package checks. The public Workshop
 page reports 0.3 features and six gallery entries: three screenshots plus the
 launch, Wiremod and Fin 3 videos.
 
-## Unreleased FlowMod integration
+## FlowMod development validation
 
-The development branch has 31 tools; the public release described above remains
-unchanged. Real Anode tests through MCP stdio pass 34 hydraulic/Wire checks,
+Before packaging, the development branch had 31 tools; the public release
+described above was still 0.3.0. Real Anode tests through MCP stdio passed 34 hydraulic/Wire checks,
 19 pneumatic/import checks without Wiremod (16 earlier checks also passed with
 Wiremod), 12 native permission/failure checks, and five checks without either
 optional addon. The existing 21-check Wire suite also passes. Three protocol
@@ -146,3 +146,29 @@ See [FlowMod integration](FLOWMOD.md) for the exact scope and scripts. Native
 motion evidence includes oil and stored-air lifts and a 200 kg twin-cylinder
 platform. These are development receipts, not a published release or a claim
 that FlowMod's broader production acceptance is finished.
+
+## 0.4.0 packaged release — 2026-11-17
+
+The release companion and GMA were tested with the public FlowMod 0.1.0 package
+in a fresh Anode Sandbox session. All 27 mounted Lua sources (11 MCP, 16 FlowMod)
+match their release sources. There is no loose runtime override.
+
+Passed: 34 hydraulic/Wire checks, 19 stored-air/import checks, 12 native
+permission/failure checks, 21 Wire regressions, and five cold-launch checks with
+FlowMod and Wiremod absent: **91 native checks** in total. Actual loads move under
+FlowMod forces; the tests do not supply replacement forces. The absent session
+also verified all 11 MCP source hashes. Its first evaluation started before the
+private consent message; it correctly refused access, then passed after consent.
+
+Five Rust unit tests, Clippy, 24 isolated setup-wizard checks, 19 Lua syntax checks
+and all three supported MCP protocol versions pass. Each protocol exposes 31
+tools. The GMA contains only the 11 original runtime Lua files. Private fixtures,
+test injection and optional dependency source are excluded.
+
+MCP's host-only connection scope remains unchanged: these are local singleplayer
+and listen-server host controls, not a dedicated-server or remote-client bridge.
+FlowMod's own two-client multiplayer validation is documented in its release.
+
+Owned game sessions were closed and marked test addons archived. The eight
+pre-test game configuration states were restored. Native receipts are retained
+under artifacts/release-0.4-*.json and artifacts/flowmod-*-evaluation.json.

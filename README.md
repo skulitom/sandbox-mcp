@@ -4,7 +4,7 @@ An original Workshop-compatible Garry's Mod addon and portable MCP companion.
 Build scenes and contraptions, inspect the real game, test physics, capture the
 result and undo changes through useful structured tools.
 
-**0.3.0 beta.** [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108) · [Download the Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest) and follow the [setup guide](docs/INSTALL.md).
+**0.4.0 beta.** [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108) · [Download the Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest) and follow the [setup guide](docs/INSTALL.md).
 
 [Launch showcase](https://www.youtube.com/watch?v=30DsajKY70I) ·
 [Wiremod rocket](https://www.youtube.com/watch?v=OYWIcwcRxZA) ·
@@ -17,10 +17,10 @@ standard MCP over stdio using the official Rust SDK. No game DLL, localhost
 network bypass, API key, or model-specific code is required by the bridge.
 An MCP-capable AI client supplies the model.
 
-**Unreleased development:** [FlowMod integration](docs/FLOWMOD.md) adds hydraulic
-and pneumatic construction, inspection, tuning and fluid blueprints (31 tools in
-this branch). It needs local matching companion/addon builds plus FlowMod; it is
-not part of the public 0.3.0 download yet.
+**New in 0.4:** [FlowMod integration](docs/FLOWMOD.md) adds hydraulic and
+pneumatic construction, inspection, tuning and fluid blueprints. Install
+[FlowMod](https://steamcommunity.com/sharedfiles/filedetails/?id=3841216963)
+separately and update both the Sandbox MCP addon and Windows companion to 0.4.0.
 
 The addon is disabled until the host connects through Q > Utilities >
 Sandbox MCP > Connection. Disconnect revokes the current connection. Building tools own their
@@ -31,7 +31,7 @@ Opting into E2 separately permits code with the host’s normal Wiremod permissi
 Original code: MIT. Game assets remain owned by their authors; no game assets
 are redistributed by this project.
 
-The companion exposes 27 tools: connection diagnostics, model/vehicle/NPC
+The companion exposes 31 tools: connection diagnostics, model/vehicle/NPC
 catalogs, world inspection, placement traces, batched scene creation, edits,
 physical connections, targeted undo, build cleanup, temporary camera views,
 game screenshots, physics observation, recent operation events, and optional
@@ -54,7 +54,7 @@ RPM and thrust, and record those values during physics tests. Blueprints preserv
 the aerodynamic settings. The optional integration uses Fin 3's own simulation;
 Fin 3 is installed separately and is not bundled. Propellers need a physical
 motor, such as an opt-in Wiremod E2 controller. Existing users must update the
-Windows companion to 0.3.0 too.
+Windows companion to 0.4.0 too.
 
 The setup wizard supports Codex, Claude Desktop, Cursor, GitHub Copilot/VS Code,
 and the older VS Code Local harness. It preserves other settings and backs up

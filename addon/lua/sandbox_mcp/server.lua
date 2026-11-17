@@ -2,7 +2,7 @@ SandboxMCP = SandboxMCP or {}
 local S = SandboxMCP
 if S.disconnect then S.disconnect() end
 if S.root then file.Delete(S.root .. "/status.json") end
-S.version = "0.3.0"
+S.version = "0.4.0"
 S.instance = util.SHA256(tostring(os.time()) .. ":" .. tostring(SysTime()) .. ":" .. tostring(math.random())):sub(1, 24)
 S.root = "sandbox_mcp/instances/" .. S.instance
 S.connected, S.owner, S.token = false, nil, nil
