@@ -172,3 +172,9 @@ FlowMod's own two-client multiplayer validation is documented in its release.
 Owned game sessions were closed and marked test addons archived. The eight
 pre-test game configuration states were restored. Native receipts are retained
 under artifacts/release-0.4-*.json and artifacts/flowmod-*-evaluation.json.
+
+Publication verification: the public Steam download has SHA-256
+`d2090c46e158008b6a8e3258410288ae53d2dcb43a208e17c0b0ce36fcfb7446`.
+Its 11 extracted Lua sources match the tested addon. Anonymous GitHub downloads
+of the Windows ZIP, GMA and source ZIP match their release checksums. Workshop's
+three screenshots and three existing showcase videos are preserved.

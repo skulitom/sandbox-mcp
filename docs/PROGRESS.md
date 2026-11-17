@@ -109,3 +109,16 @@ and was correctly refused; after consent all five checks passed. The private
 server-side quit request was blocked by GMod; normal client-console quit was used
 instead and that unused fixture request handler was removed. Fixtures are excluded
 from the GMA. Public release receipts and download verification follow below.
+
+## 2026-11-17 — 0.4 publication verified
+
+Source and tag v0.4.0 were pushed to skulitom/sandbox-mcp; the Windows companion,
+GMA, MIT source ZIP and checksums are public on GitHub. Workshop item 3839989108
+is public with the new FlowMod guide and matching-companion instructions. All
+three public binary/source asset downloads match their published checksums.
+The Steam download matches tested GMA SHA-256
+`d2090c46e158008b6a8e3258410288ae53d2dcb43a208e17c0b0ce36fcfb7446`;
+all 11 extracted runtime Lua files match source. The three screenshots and launch,
+Wiremod and Fin 3 videos remain intact. FlowMod's own listing links this release.
+All test games are closed, eight original configuration states hash-match their
+snapshot, owned test blueprints are archived, and the Anode lease is released.
