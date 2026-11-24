@@ -18,7 +18,7 @@ public static class GModWorkshop {
     [DllImport(Dll, CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)] [return: MarshalAs(UnmanagedType.I1)]
     public static extern bool SteamAPI_ISteamUGC_SetItemTitle(IntPtr self, ulong update, string title);
     [DllImport(Dll, CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)] [return: MarshalAs(UnmanagedType.I1)]
-    public static extern bool SteamAPI_ISteamUGC_SetItemDescription(IntPtr self, ulong update, string description);
+    public static extern bool SteamAPI_ISteamUGC_SetItemDescription(IntPtr self, ulong update, [MarshalAs(UnmanagedType.LPUTF8Str)] string description);
     [DllImport(Dll, CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)] [return: MarshalAs(UnmanagedType.I1)]
     public static extern bool SteamAPI_ISteamUGC_SetItemContent(IntPtr self, ulong update, string folder);
     [DllImport(Dll, CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)] [return: MarshalAs(UnmanagedType.I1)]

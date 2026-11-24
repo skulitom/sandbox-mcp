@@ -38,6 +38,7 @@ local function info(e)
     if e:IsNPC() then out.health=e:Health() end
     if meta and meta.wire then out.wire_preset=meta.wire end
     if S.fin3Read then out.fin3=S.fin3Read(e) end
+    if S.cogworksRead then out.cogworks=S.cogworksRead(e) end
     if S.flowmodRead then out.flowmod=S.flowmodRead(e) end
     return out
 end
@@ -126,8 +127,9 @@ H.sandbox_catalog = function(a)
         for _, class in ipairs(npcClasses) do if class:find(query,1,true) then matches[#matches+1]=class end end
     elseif kind=="wire" then return S.wireCatalog(a)
     elseif kind=="fin3" then return S.fin3Catalog(a)
+    elseif kind=="cogworks" then return S.cogworksCatalog(a)
     elseif kind=="flowmod" then return S.flowmodCatalog(a)
-    else error("kind must be models, vehicles, npcs, wire, fin3, or flowmod",0) end
+    else error("kind must be models, vehicles, npcs, wire, fin3, flowmod, or cogworks",0) end
     table.sort(matches,function(a,b) return (istable(a) and a.id or a)<(istable(b) and b.id or b) end)
     local offset, limit = math.floor(S.number(a.offset or 0,0,1000000)), math.floor(S.number(a.limit or 20,1,40))
     local items = {}
@@ -314,6 +316,7 @@ H.sandbox_edit = function(a)
     for _,item in ipairs(a.items) do
         validateChanges(item)
         local e=resolve(item.ref,true) if seen[e] then error("Duplicate ref in edit batch",0) end seen[e]=true
+        if tracked[e].cogworks then error("Move the support or adjust the drivetrain with Cogworks tools",0) end
         entities[#entities+1]=e
         local i=info(e)
         snapshots[#snapshots+1]={pos=i.pos,angles=i.angles,color=i.color,material=i.material,skin=i.skin,mass=i.physics and i.physics.mass,frozen=i.physics and i.physics.frozen,velocity=i.physics and i.physics.velocity}

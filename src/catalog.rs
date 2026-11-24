@@ -37,9 +37,9 @@ pub fn tools() -> Vec<Tool> {
         ),
         (
             "catalog",
-            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire), Fin 3 airfoils (kind=fin3), or FlowMod fluid components, ports, ranges and circuit guidance (kind=flowmod). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
+            "Discover installed models with bounds, vehicle presets, NPC classes, or optional Wiremod components and gate actions (kind=wire), Fin 3 airfoils (kind=fin3), Cogworks rotating parts (kind=cogworks), or FlowMod fluid components, ports, ranges and circuit guidance (kind=flowmod). The Wire catalog explains settings and reports whether Wiremod is installed. Query uses a case-insensitive substring. Optional shape is a filename hint; min_size/max_size filter X/Y/Z model dimensions, and physics_only filters spawnable props. Paginated.",
             object(
-                json!({"kind":{"enum":["models","vehicles","npcs","wire","fin3","flowmod"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
+                json!({"kind":{"enum":["models","vehicles","npcs","wire","fin3","flowmod","cogworks"]},"query":{"type":"string","maxLength":128},"shape":{"enum":["box","plate","tube","sphere","cone","wheel"]},"min_size":vector(),"max_size":vector(),"physics_only":{"type":"boolean"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":40}}),
                 &[],
             ),
             true,
@@ -190,6 +190,7 @@ pub fn tools() -> Vec<Tool> {
     definitions.extend(workflow_tools());
     definitions.extend(fin3_tools());
     definitions.extend(flowmod_tools());
+    definitions.extend(cogworks_tools());
     definitions.into_iter().map(|(name,desc,schema,ro,destructive)|serde_json::from_value(json!({"name":format!("sandbox_{name}"),"description":desc,"inputSchema":schema,"annotations":{"readOnlyHint":ro,"destructiveHint":destructive,"idempotentHint":ro,"openWorldHint":name=="e2"}})).expect("tool schema")).collect()
 }
 
@@ -362,6 +363,49 @@ fn flowmod_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
             ),
             false,
             true,
+        ),
+    ]
+}
+
+fn cogworks_tools() -> Vec<(&'static str, &'static str, Value, bool, bool)> {
+    let socket = json!({"type":"integer","minimum":0,"maximum":2});
+    vec![
+        (
+            "cogworks_mount",
+            "Mount a native Cogworks part within 512 Source units. In surface mode aim at world geometry, or provide an owned prop target plus its local surface point and outward normal. For hub (1:1) or mesh (external gears), target an owned bearing ref. bearing_degrees places a mesh around the target in its local XY plane. Catalog kind=cogworks lists allowed parts, teeth and compact sizes. Returns ref, signed ratio and targeted undo ID.",
+            object(
+                json!({"kind":string(),"mode":{"enum":["surface","mesh","hub"]},"target":string(),"point":vector(),"normal":vector(),"teeth":{"enum":[12,24,30,36,48,60]},"compact":{"type":"boolean"},"bearing_degrees":{"type":"number","minimum":-360,"maximum":360},"label":{"type":"string","minLength":1,"maxLength":64},"spokes":{"type":"integer","minimum":3,"maximum":12},"crank_throw":{"type":"integer","minimum":1,"maximum":3}}),
+                &["kind"],
+            ),
+            false,
+            false,
+        ),
+        (
+            "cogworks_connect",
+            "Connect two reachable owned bearings with a native shaft or belt. Use socket indices from cogworks_inspect, or let Cogworks choose. Returns link ref and targeted undo.",
+            object(
+                json!({"from":string(),"to":string(),"kind":{"enum":["shaft","belt"]},"from_socket":socket,"to_socket":socket}),
+                &["from", "to"],
+            ),
+            false,
+            false,
+        ),
+        (
+            "cogworks_inspect",
+            "Read live signed RPM, rotor angle, teeth, socket names, connected neighbors and native drivetrain diagnostics for a Cogworks bearing. sandbox_measure samples RPM over time.",
+            object(json!({"ref":string()}), &["ref"]),
+            true,
+            false,
+        ),
+        (
+            "cogworks_drive",
+            "Turn an owned, reachable hand crank or pedals for 0.1 to 5 seconds in either direction. Cogworks simulates downstream motion and coasting. Use inspect or measure on the output.",
+            object(
+                json!({"ref":string(),"seconds":{"type":"number","minimum":0.1,"maximum":5},"direction":{"enum":[-1,1]}}),
+                &["ref"],
+            ),
+            false,
+            false,
         ),
     ]
 }

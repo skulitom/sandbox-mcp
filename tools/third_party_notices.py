@@ -15,7 +15,8 @@ for package in sorted(meta["packages"],key=lambda p:p["name"]):
     if package.get("repository"):sections.append("Repository: "+package["repository"]+"\n")
     for p in sorted(candidates):sections.append(f"\n### {p.name}\n\n```text\n{p.read_text(encoding='utf-8',errors='replace')}\n```\n")
     if not candidates:missing.append(package["name"])
-target=ROOT/"release/sandbox-mcp-0.4.0-windows-x64/THIRD-PARTY-NOTICES.md"
+metadata_version = next(p["version"] for p in meta["packages"] if p["name"] == "sandbox-mcp")
+target=ROOT/f"release/sandbox-mcp-{metadata_version}-windows-x64/THIRD-PARTY-NOTICES.md"
 target.parent.mkdir(parents=True,exist_ok=True)
 target.write_text("\n".join(sections),encoding="utf-8")
 print(json.dumps({"path":str(target),"packages":len(meta["packages"])-1,"missing_license_files":missing}))

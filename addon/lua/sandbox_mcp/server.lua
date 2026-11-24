@@ -2,7 +2,7 @@ SandboxMCP = SandboxMCP or {}
 local S = SandboxMCP
 if S.disconnect then S.disconnect() end
 if S.root then file.Delete(S.root .. "/status.json") end
-S.version = "0.4.0"
+S.version = "0.5.0"
 S.instance = util.SHA256(tostring(os.time()) .. ":" .. tostring(SysTime()) .. ":" .. tostring(math.random())):sub(1, 24)
 S.root = "sandbox_mcp/instances/" .. S.instance
 S.connected, S.owner, S.token = false, nil, nil
@@ -36,7 +36,7 @@ end
 function S.notify()
     S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
         connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, wiremod=S.wireAvailable and S.wireAvailable() or false, fin3=S.fin3Available and S.fin3Available() or false, flowmod=S.flowmodAvailable and S.flowmodAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants", "optional_fin3", "optional_flowmod"}})
+        gamemode=engine.ActiveGamemode(), part_count=S.liveCount and S.liveCount() or 0, wiremod=S.wireAvailable and S.wireAvailable() or false, fin3=S.fin3Available and S.fin3Available() or false, cogworks=S.cogworksAvailable and S.cogworksAvailable() or false, flowmod=S.flowmodAvailable and S.flowmodAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants", "optional_fin3", "optional_flowmod", "optional_cogworks"}})
     if not IsValid(S.owner) then return end
     net.Start("sandbox_mcp_state")
     net.WriteBool(S.connected)
@@ -74,6 +74,7 @@ include("sandbox_mcp/wire.lua")
 include("sandbox_mcp/expression2.lua")
 include("sandbox_mcp/fin3.lua")
 include("sandbox_mcp/flowmod.lua")
+include("sandbox_mcp/cogworks.lua")
 include("sandbox_mcp/builds.lua")
 include("sandbox_mcp/experiments.lua")
 include("sandbox_mcp/grants.lua")
@@ -142,7 +143,7 @@ hook.Add("Think", "SandboxMCPBridge", function()
         if S.connected and not IsValid(S.owner) then S.disconnect() end
         S.write(S.root .. "/status.json", {version=S.version, instance=S.instance, heartbeat=os.time(), map=game.GetMap(),
             connected=S.connected, screenshots=S.captureAllowed == true and S.connected, player=IsValid(S.owner) and S.owner:Nick() or nil,
-            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), wiremod=S.wireAvailable and S.wireAvailable() or false, fin3=S.fin3Available and S.fin3Available() or false, flowmod=S.flowmodAvailable and S.flowmodAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants", "optional_fin3", "optional_flowmod"}})
+            gamemode=engine.ActiveGamemode(), part_count=S.liveCount(), wiremod=S.wireAvailable and S.wireAvailable() or false, fin3=S.fin3Available and S.fin3Available() or false, cogworks=S.cogworksAvailable and S.cogworksAvailable() or false, flowmod=S.flowmodAvailable and S.flowmodAvailable() or false, e2_allowed=S.connected and S.e2Allowed==true, capabilities={"inspect", "build", "undo", "physics", "camera", "optional_wiremod", "blueprints", "checkpoints", "wire_batch", "assembly_transform", "measure", "diagnose", "optional_e2", "player_prop_grants", "optional_fin3", "optional_flowmod", "optional_cogworks"}})
     end
     if clock < nextPoll then return end
     nextPoll = clock + 0.06

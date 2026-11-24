@@ -9,6 +9,7 @@ local function sample(e)
         end
     end
     if S.fin3Read then result.fin3=S.fin3Read(e) end
+    if i.cogworks then result.cogworks=i.cogworks end
     if S.flowmodRead then result.flowmod=S.flowmodRead(e) end
     return result
 end

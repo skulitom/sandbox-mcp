@@ -2,7 +2,7 @@ param([string]$GameRoot = 'D:\Steam\steamapps\common\GarrysMod')
 $ErrorActionPreference='Stop'
 $project=Split-Path $PSScriptRoot -Parent
 $release=Join-Path $project 'release'
-$version='0.4.0'
+$version=(& cargo metadata --format-version 1 --no-deps --manifest-path (Join-Path $project 'Cargo.toml') | ConvertFrom-Json).packages[0].version
 $bundle=Join-Path $release "sandbox-mcp-$version-windows-x64"
 New-Item -ItemType Directory -Force -Path $bundle | Out-Null
 & cargo build --release --locked --manifest-path (Join-Path $project 'Cargo.toml')

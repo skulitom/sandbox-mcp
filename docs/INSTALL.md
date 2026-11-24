@@ -39,9 +39,11 @@ To use the new flight tools, install [Fin 3 - Superior Flight](https://steamcomm
 separately and restart the map. Wiremod is optional for motors/controllers; gliders
 only need Fin 3. Ask the AI to check `sandbox_catalog` with `kind: "fin3"`.
 
-Existing users: extract the **0.4.0 companion**, run Setup.vbs again with the AI app
+For mechanical builds, subscribe to [Cogworks](https://steamcommunity.com/sharedfiles/filedetails/?id=3845221917) and reload the map. Ask your assistant to check `sandbox_catalog` with `kind=cogworks`.
+
+Existing users: extract the **0.5.0 companion**, run Setup.vbs again with the AI app
 closed, then restart that app and the GMod map. Workshop updates the game addon;
-it cannot update an executable outside the game. Both sides should report 0.4.0.
+it cannot update an executable outside the game. Both sides should report 0.5.0.
 
 Try: "Build a Fin 3 glider. Set the local wing axes correctly, measure its lift
 and flight path, tune the tail, then save the working design as a blueprint."
@@ -71,7 +73,7 @@ models vary in building ability and may require tool approvals in their app.
   access and resets the temporary camera. Restarting/changing maps disconnects.
 - Only the local singleplayer/listen-server host can connect. Other players do
   not gain access by subscribing. Dedicated-server and remote-machine control
-  are not supported in 0.4.0.
+  are not supported in 0.5.0.
 - The AI can inspect the world, but can edit/remove only objects it created for
   this host, plus assemblies you explicitly grant using the panel. Grants in 0.3
   support your `prop_physics` assemblies only. Revoking a grant or disconnecting

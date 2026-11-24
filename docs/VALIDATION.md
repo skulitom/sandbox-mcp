@@ -178,3 +178,9 @@ Publication verification: the public Steam download has SHA-256
 Its 11 extracted Lua sources match the tested addon. Anonymous GitHub downloads
 of the Windows ZIP, GMA and source ZIP match their release checksums. Workshop's
 three screenshots and three existing showcase videos are preserved.
+
+## 0.5.0 optional Cogworks integration
+
+Two separate Anode Sandbox sessions on `gm_construct` exercised the release companion over MCP using the Lua files extracted from the Workshop package. The installed Cogworks catalog returned 21 rotating parts. A compact 24-tooth crank drove a 12-tooth gear, a keyed hub and a remote shaft. One server sample measured +65.68 RPM at the crank and -131.37 RPM at all three outputs. Reversing the input gave -65.67 and +131.35 RPM. The test also connected a belt, read sockets and native diagnostics, rejected duplicate connections and invalid drive targets, and undid the individual mounts and links.
+
+A separate load with Cogworks absent returned the optional-install message for all four mechanical tools. Standard prop creation and cleanup passed. All three supported MCP protocol versions exposed 35 tools. Five Rust tests, Clippy and the 24 setup-wizard checks passed.

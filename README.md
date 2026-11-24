@@ -4,7 +4,7 @@ An original Workshop-compatible Garry's Mod addon and portable MCP companion.
 Build scenes and contraptions, inspect the real game, test physics, capture the
 result and undo changes through useful structured tools.
 
-**0.4.0 beta.** [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108) · [Download the Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest) and follow the [setup guide](docs/INSTALL.md).
+**0.5.0 beta.** [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3839989108) · [Download the Windows companion](https://github.com/skulitom/sandbox-mcp/releases/latest) and follow the [setup guide](docs/INSTALL.md).
 
 [Launch showcase](https://www.youtube.com/watch?v=30DsajKY70I) ·
 [Wiremod rocket](https://www.youtube.com/watch?v=OYWIcwcRxZA) ·
@@ -17,10 +17,15 @@ standard MCP over stdio using the official Rust SDK. No game DLL, localhost
 network bypass, API key, or model-specific code is required by the bridge.
 An MCP-capable AI client supplies the model.
 
-**New in 0.4:** [FlowMod integration](docs/FLOWMOD.md) adds hydraulic and
+**New in 0.5.** With [Cogworks](https://steamcommunity.com/sharedfiles/filedetails/?id=3845221917)
+installed, your assistant can mount gears, join hubs, connect shafts and belts, and
+turn a crank while measuring the output RPM. Try "Build a 2:1 gear reduction and
+measure both shafts." [Mechanical tools and example](docs/COGWORKS.md).
+
+**Optional hydraulics.** [FlowMod integration](docs/FLOWMOD.md) adds hydraulic and
 pneumatic construction, inspection, tuning and fluid blueprints. Install
 [FlowMod](https://steamcommunity.com/sharedfiles/filedetails/?id=3841216963)
-separately and update both the Sandbox MCP addon and Windows companion to 0.4.0.
+separately and update both the Sandbox MCP addon and Windows companion to 0.5.0.
 
 The addon is disabled until the host connects through Q > Utilities >
 Sandbox MCP > Connection. Disconnect revokes the current connection. Building tools own their
@@ -54,7 +59,7 @@ RPM and thrust, and record those values during physics tests. Blueprints preserv
 the aerodynamic settings. The optional integration uses Fin 3's own simulation;
 Fin 3 is installed separately and is not bundled. Propellers need a physical
 motor, such as an opt-in Wiremod E2 controller. Existing users must update the
-Windows companion to 0.4.0 too.
+Windows companion to 0.5.0 too.
 
 The setup wizard supports Codex, Claude Desktop, Cursor, GitHub Copilot/VS Code,
 and the older VS Code Local harness. It preserves other settings and backs up

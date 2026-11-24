@@ -35,6 +35,7 @@ function S.captureBlueprint(a)
     local labels,selected={},{}
     for i,e in ipairs(entities) do
         local m=S.tracked[e] local p=table.Copy(m.spec or {}) local info=S.entityInfo(e)
+        if m.cogworks then error("Save the Cogworks mount and socket recipe to rebuild this mechanism",0) end
         if p.kind=="npc" then error("NPC behavior cannot be saved as a contraption blueprint",0) end
         local label=m.label local suffix=0
         while labels[label] do suffix=suffix+1 label="part-"..i.."-"..suffix end
